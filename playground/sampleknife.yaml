@@ -1,7 +1,7 @@
 name: sampleknife
 description: sample knives to use with sak
 author: Fred Mitchell
-copyright: 2024
+copyright: 2024 Atomlogik.de
 
 knife:
   command: ExtIP
@@ -16,7 +16,7 @@ knife:
     short: i
     help: Display the IPv6 address
   action:
-    ex:
+    exe:
       - ls
     unless: nolocation
       - echo "show location"
@@ -31,9 +31,9 @@ knife:
     flavor: switch
     long: justversion
     short: j
-    help: Just display the numerical version number, no adjoining text.
+    help: Just display the numerical version number, no adjoining texet.
   action:
-    ex: echo "some action"
+    exe: echo "some action and we are ignoring the switch for now"
 
 knife:
   command: Sleep
@@ -44,11 +44,18 @@ knife:
     meta: SECONDS
     type: Int
     help: Seconds to wait before going to sleep
+  option:
+    flavor: switch
+    long: shutdown
+    short: H
+    help: Shutdown the system, not sleep
   action:
-    ex:
+    exe:
       when: wait
         - sleep ${SECONDS}
         - echo "wait ${SECONDS} seconds then hibernate"
+      when: shutdown
+        - echo "halt"
       otherwise:
         - echo "hibernate"
         

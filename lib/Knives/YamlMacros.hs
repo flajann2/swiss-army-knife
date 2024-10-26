@@ -1,12 +1,12 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE DataKinds #-}
 
 module Knives.YamlMacros where
 
 
 import GHC.Generics
-import Data.Aeson (FromJSON)
 import qualified Data.Yaml as Y
 import qualified Data.ByteString.Char8 as BS
 import Data.Yaml.Combinators
@@ -36,6 +36,11 @@ data ParmType = PTInt Integer
               | PTString String
   deriving (Show, Generic)
 
+data OptType = OTSwitch
+             | OTOptional
+             | OTRequired
+  deriving (Show, Generic)
+
 data Option = Option
   { optype :: OptType
   , long :: String
@@ -44,6 +49,13 @@ data Option = Option
   , ptype :: ParmType
   , help :: String
   } deriving (Show, Generic)
+
+data When = When !String ![String] deriving (Show, Generic)
+data Otherwise = Otherwise ![String] deriving (Show, Generic)
+data Action = AWhen !When
+            | AOtherwise !Otherwise
+            | Exe !(Maybe String) ![When] !(Maybe Otherwise)
+  deriving (Show, Generic)
 
 data Knife = Knife
   { command :: String    -- subcommand name, lowercased from the Yaml

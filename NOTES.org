@@ -10,4 +10,6 @@
    command-line utilities. It is great for writing daemons, however,
    with its all-mighty OTP.
 ** I need to set this up in the AUR.
-
+** Adding a Yaml capability so that sak
+   does not need to be recompiled to add new
+   functionality.
