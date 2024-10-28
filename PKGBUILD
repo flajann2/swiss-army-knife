@@ -6,14 +6,13 @@ pkgdesc="A collection of powerful but useful small tools."
 arch=('x86_64')
 url="https://github.com/flajann2/swiss-army-knife-hs"
 license=('MIT')
-depends=('ghc' 'stack')
-makedepends=('git')
+depends=('ghc' 'cabal')
 source=("$pkgname::git+https://github.com/flajann2/swiss-army-knife-hs.git")
 md5sums=('SKIP')
 
 build() {
     cd "$srcdir/$pkgname"
-    stack build --system-ghc --ghc-options="-O3"
+    cabal new-build
 }
 
 package() {

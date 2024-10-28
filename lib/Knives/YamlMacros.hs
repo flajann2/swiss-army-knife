@@ -2,11 +2,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 
 module Knives.YamlMacros where
 
 
-import GHC.Generics
+import GHC.Generics (Generic)
 import qualified Data.Yaml as Y
 import qualified Data.ByteString.Char8 as BS
 import Data.Yaml.Combinators
@@ -42,36 +43,42 @@ data OptType = OTSwitch
   deriving (Show, Generic)
 
 data Option = Option
-  { optype :: OptType
-  , long :: String
-  , short :: Char
-  , meta :: String
-  , ptype :: ParmType
-  , help :: String
+  { optype :: !OptType
+  , long   :: !String
+  , short  :: !Char
+  , meta   :: !String
+  , ptype  :: !ParmType
+  , help   :: !String
   } deriving (Show, Generic)
 
-data When = When !String ![String] deriving (Show, Generic)
-data Otherwise = Otherwise ![String] deriving (Show, Generic)
+data When = When { op_name :: !String
+                 , macro   :: ![String]
+                 } deriving (Show, Generic)
+
+data Otherwise = Otherwise { macro :: ![String] } deriving (Show, Generic)
+
 data Action = AWhen !When
             | AOtherwise !Otherwise
-            | Exe !(Maybe String) ![When] !(Maybe Otherwise)
-  deriving (Show, Generic)
+            | Exe { macro          :: !(Maybe String)
+                  , when_cond      :: ![When]
+                  , otherwise_cond :: !(Maybe Otherwise)
+                  } deriving (Show, Generic)
 
 data Knife = Knife
-  { command :: String    -- subcommand name, lowercased from the Yaml
-  , option  :: Vector Option
-  , action  :: Action 
+  { command :: !String    -- subcommand name, lowercased from the Yaml
+  , option  :: !(Vector Option)
+  , action  :: !Action 
   } deriving (Show, Generic)
 
 data Macros = Macros
-  { name :: String
-  , description :: String
-  , author :: String
-  , copyright :: String
-  , knives :: Vector Knife
+  { name        :: !String
+  , description :: !String
+  , author      :: !String
+  , copyright   :: !String
+  , knives      :: !(Vector Knife)
   } deriving (Show, Generic)
-
 
 knifeYamlMacros :: YamlMacrosOptions -> IO ()
 knifeYamlMacros opts = do
+  putStrLn $ "TODO: Fix this silly output for macros! " ++ show opts
   return ()

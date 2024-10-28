@@ -16,7 +16,8 @@ main = do
       <> header "Swiss Army Knife -- Many useful functions for the hacker in all of us." )
   
   case cmd of
-    ExtIP extipOpts   -> knifeExtIP extipOpts
-    Kernel kernelOpts -> knifeKernel kernelOpts
-    Sleep sleepOpts   -> knifeSleep sleepOpts 
-    ZfsCheck zfsOpts  -> knifeZfsCheck zfsOpts
+    ExtIP extipOpts     -> knifeExtIP extipOpts
+    Kernel kernelOpts   -> knifeKernel kernelOpts
+    Sleep sleepOpts     -> knifeSleep sleepOpts 
+    ZfsCheck zfsOpts    -> knifeZfsCheck zfsOpts
+    YamlMacros yamlOpts -> knifeYamlMacros yamlOpts
