@@ -4,19 +4,20 @@
 module CommandLine where
 
 import Options.Applicative
-    ( optional,
-      auto,
-      command,
-      help,
-      info,
-      long,
-      metavar,
-      option,
-      progDesc,
-      short,
-      subparser,
-      switch,
-      Parser )
+    ( optional
+    , auto
+    , command
+    , help
+    , info
+    , long
+    , metavar
+    , option
+    , progDesc
+    , short
+    , str
+    , subparser
+    , switch
+    , Parser )
 -- import Data.Semigroup ((<>))
 
 -- Define data types for our commands and options
@@ -91,7 +92,7 @@ zfscheckOptionsParser = ZfsCheckOptions
 
 yamlOptionsParser :: Parser YamlMacrosOptions
 yamlOptionsParser = YamlMacrosOptions
-  <$> optional (option auto (long "file"
+  <$> optional (option str  (long "file"
                             <> short 'f'
                             <> metavar "PATHNAME"
                             <> help "Maco file to load"))
