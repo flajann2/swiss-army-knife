@@ -52,10 +52,10 @@ instance FromJSON RLoc where
     <*> v .: fs "query"
   
 knifeExtIP :: ExtIPOptions -> IO ()
-knifeExtIP opts = do
-  res <- (parseRequest >=> httpLBS) $ bool url_ipv4 url_ipv6 $ ipv6 opts
+knifeExtIP opt = do
+  res <- (parseRequest >=> httpLBS) $ bool url_ipv4 url_ipv6 $ ipv6 opt
   putStrLn $ ipaddr res
-  unless (nolocation opts) $ do
+  unless (nolocation opt) $ do
       loc <- location
       putStrLn loc
   where

@@ -9,7 +9,7 @@ import System.Process
 import CommandLine
 
 knifeZfsCheck :: ZfsCheckOptions -> IO ()
-knifeZfsCheck opts = do
+knifeZfsCheck _opt = do
   putStrLn "Check the version of archzfs with repo kernel version so you can determine if an upgrade is possible."
 
   let url_zfs = "https://raw.githubusercontent.com/openzfs/zfs/master/META"

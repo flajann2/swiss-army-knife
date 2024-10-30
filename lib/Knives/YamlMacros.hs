@@ -6,7 +6,7 @@
 
 module Knives.YamlMacros where
 
-
+import System.IO
 import GHC.Generics (Generic)
 import qualified Data.Yaml as Y
 import qualified Data.ByteString.Char8 as BS
@@ -79,6 +79,9 @@ data Macros = Macros
   } deriving (Show, Generic)
 
 knifeYamlMacros :: YamlMacrosOptions -> IO ()
-knifeYamlMacros opts = do
-  putStrLn $ "TODO: Fix this silly output for macros! " ++ show opts
-  return ()
+knifeYamlMacros opt = do
+  case file opt of
+    Just pn -> do
+      yamlfile <- readFile pn
+      putStrLn yamlfile
+    Nothing -> putStrLn "No Yaml file given."
