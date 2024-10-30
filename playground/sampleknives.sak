@@ -1,0 +1,63 @@
+import SAK.DSL
+
+headerSetup = header "Sample Knife Document"
+              [ description "sample knives to use with sak"
+              , author "Fred Mitchell" "fred.mitchell@atomlogik.de"
+              , copyright "Atomlogik.de" "2024"
+              ]
+
+--- knives:
+---   knife:
+---     command: ExtIP
+---     option:
+---       flavor: switch
+---       long: nolocation
+---       short: n
+---       help: Don't display location information
+---     option:
+---       flavor: switch
+---       long: ipv6
+---       short: i
+---       help: Display the IPv6 address
+---     action:
+---       exe:
+---         - ls
+---       unless: nolocation
+---         - echo "show location"
+---       when: ipv6
+---         - echo "show IPv6"
+---       otherwise:
+---         - echo "show IPv4"
+---   knife:
+---     command: Kernel
+---     option:
+---       flavor: switch
+---       long: justversion
+---       short: j
+---       help: Just display the numerical version number, no adjoining texet.
+---     action:
+---       exe: echo "some action and we are ignoring the switch for now"
+---   knife:
+---     command: Sleep
+---     option:
+---       flavor: parm
+---       long: wait
+---       short: w
+---       meta: SECONDS
+---       type: Int
+---       help: Seconds to wait before going to sleep
+---     option:
+---       flavor: switch
+---       long: shutdown
+---       short: H
+---       help: Shutdown the system, not sleep
+---     action:
+---       exe:
+---         when: wait
+---           - sleep ${SECONDS}
+---           - echo "wait ${SECONDS} seconds then hibernate"
+---         when: shutdown
+---           - echo "halt"
+---         otherwise:
+---           - echo "hibernate"
+        

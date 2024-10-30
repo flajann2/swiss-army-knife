@@ -3,8 +3,17 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Knives.YamlMacros where
+
+
+import GHC
+import GHC.Paths (libdir)
+import DynFlags
+import HscTypes
+import Outputable (showSDoc)
+import GHC.Utils.Outputable (ppr)
 
 import System.IO
 import GHC.Generics (Generic)
@@ -14,7 +23,6 @@ import Data.Yaml.Combinators
 import Data.Text (Text)
 import Data.Vector (Vector)
 import qualified Data.Vector as V
-
 import Network.HTTP.Simple
 import Data.Aeson
 import Data.Bool (bool)
@@ -85,3 +93,4 @@ knifeYamlMacros opt = do
       yamlfile <- readFile pn
       putStrLn yamlfile
     Nothing -> putStrLn "No Yaml file given."
+
