@@ -25,58 +25,10 @@ import qualified Data.ByteString.Lazy as LBS
 import qualified Data.ByteString.Lazy.Char8 as LBS8
 import Control.Monad ((>=>), unless)
 import System.Process
-import CommandLine
+import Yaml.Parser
+import CommandLine ( YamlMacrosOptions(file) )
 import Options.Applicative.Types (ParserM, OptVisibility)
 
-data Flavor a = Switch Bool
-              | Parm a
-  deriving (Show, Generic)
-
-data ParmType = PTInt Integer
-              | PTFloat Float
-              | PTString String
-  deriving (Show, Generic)
-
-data OptType = OTSwitch
-             | OTOptional
-             | OTRequired
-  deriving (Show, Generic)
-
-data Option = Option
-  { optype :: !OptType
-  , long   :: !String
-  , short  :: !Char
-  , meta   :: !String
-  , ptype  :: !ParmType
-  , help   :: !String
-  } deriving (Show, Generic)
-
-data When = When { op_name :: !String
-                 , macro   :: ![String]
-                 } deriving (Show, Generic)
-
-data Otherwise = Otherwise { macro :: ![String] } deriving (Show, Generic)
-
-data Action = AWhen !When
-            | AOtherwise !Otherwise
-            | Exe { macro          :: !(Maybe String)
-                  , when_cond      :: ![When]
-                  , otherwise_cond :: !(Maybe Otherwise)
-                  } deriving (Show, Generic)
-
-data Knife = Knife
-  { command :: !String    -- subcommand name, lowercased from the Yaml
-  , option  :: !(Vector Option)
-  , action  :: !Action 
-  } deriving (Show, Generic)
-
-data Macros = Macros
-  { name        :: !String
-  , description :: !String
-  , author      :: !String
-  , copyright   :: !String
-  , knives      :: !(Vector Knife)
-  } deriving (Show, Generic)
 
 knifeYamlMacros :: YamlMacrosOptions -> IO ()
 knifeYamlMacros opt = do
