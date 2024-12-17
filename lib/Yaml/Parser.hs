@@ -21,9 +21,11 @@ import Data.Bool (bool)
 import Data.List (isInfixOf)
 import Data.List.Split (splitOn)
 import Data.Char (isSpace)
+import Data.HashMap.Strict (keys)
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.ByteString.Lazy.Char8 as LBS8
 import Control.Monad ((>=>), unless)
+import Control.Applicative (empty)
 import System.Process
 import CommandLine
 import Options.Applicative.Types (ParserM, OptVisibility)
@@ -59,6 +61,7 @@ data Option = Option
   , help   :: !String
   } deriving (Show, Generic)
 
+
 instance FromJSON Option where
   parseJSON = withObject "Option" $ \v -> Option
         <$> v .: "optype"
@@ -68,18 +71,19 @@ instance FromJSON Option where
         <*> v .: "ptype"
         <*> v .: "help"
 
-data When = When { op_name :: !String
-                 , macro   :: ![String]
-                 } deriving (Show, Generic)
+data BashLine = BashLine { line :: String } deriving (Show, Generic)
 
-data Otherwise = Otherwise { macro :: ![String] } deriving (Show, Generic)
+data BashBlock = Exe       [BashLine] 
+               | When      { op_name :: String, lines    :: [BashLine] }
+               | Unless    { op_name :: String, lines    :: [BashLine] }
+               | Otherwise { lines :: [BashLine] }
+               deriving (Show, Generic)
 
-data Action = AWhen !When
-            | AOtherwise !Otherwise
-            | Exe { macro          :: !(Maybe String)
-                  , when_cond      :: ![When]
-                  , otherwise_cond :: !(Maybe Otherwise)
-                  } deriving (Show, Generic)
+data Action = Action { bash :: [BashBlock] } deriving (Show, Generic)
+
+instance FromJSON Action where
+    parseJSON = withObject "Action" $ \v -> Action
+        <$> v .: "codes"
 
 data Knife = Knife
   { command :: !String    -- subcommand name, lowercased from the Yaml
