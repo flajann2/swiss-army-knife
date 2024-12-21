@@ -50,6 +50,7 @@ library
     , vector
     , yaml
     , yaml-combinators
+    , unordered-containers
   default-language: Haskell2010
 
 executable sak
