@@ -3,7 +3,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DuplicateRecordFields #-}
-
+{-# LANGUAGE QuasiQuotes #-}
 module Yaml.Parser where
 
 import System.IO
@@ -16,7 +16,11 @@ import Data.Vector (Vector)
 import qualified Data.Vector as V
 
 import Network.HTTP.Simple
+
 import Data.Aeson
+import Data.Aeson.Schema
+import Data.Aeson.Schema.Internal
+
 import Data.Bool (bool)
 import Data.List (isInfixOf)
 import Data.List.Split (splitOn)
@@ -29,6 +33,26 @@ import Control.Applicative (empty)
 import System.Process
 import CommandLine
 import Options.Applicative.Types (ParserM, OptVisibility)
+
+type KnifeSchema [schema|
+{
+    name: Text
+  , description: Text
+  , author: {
+      name: Text
+    , email: Text
+  }
+  , copyright: {
+      holder: Text
+    , year: Int
+  }
+  , knives: List {
+      knife: {
+      command:
+    }
+  }
+}
+|]
 
 data ParmType = PTInt 
               | PTFloat 

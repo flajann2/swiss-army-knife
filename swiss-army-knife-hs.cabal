@@ -40,6 +40,7 @@ library
   ghc-options: -O3 -Wall
   build-depends:
       aeson
+    , aeson-schemas
     , base >=4.7 && <5
     , bytestring
     , http-conduit

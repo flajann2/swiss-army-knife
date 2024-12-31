@@ -103,11 +103,11 @@ yamlOptionsParser = YamlMacrosOptions
 -- Combine the subcommand parsers
 commandParser :: Parser Command
 commandParser = subparser
-  (    command "extip" (info (ExtIP <$> extipOptionsParser) (progDesc "Display external IP address"))
-    <> command "kernel" (info (Kernel <$> kernelOptionsParser) (progDesc "Display kernel information, both installed and currently running"))
-    <> command "sleep"  (info (Sleep <$> sleepOptionsParser) (progDesc "Put the machine to sleep"))
-    <> command "zfscheck" (info (ZfsCheck <$> zfscheckOptionsParser) (progDesc "Check ZFS kernel versions for compatibility"))
-    <> command "macros" (info (YamlMacros <$> yamlOptionsParser) (progDesc "Load Yaml Macros"))
+  (    command "extip"    (info (ExtIP      <$> extipOptionsParser) (progDesc "Display external IP address"))
+    <> command "kernel"   (info (Kernel     <$> kernelOptionsParser) (progDesc "Display kernel information, both installed and currently running"))
+    <> command "sleep"    (info (Sleep      <$> sleepOptionsParser) (progDesc "Put the machine to sleep"))
+    <> command "zfscheck" (info (ZfsCheck   <$> zfscheckOptionsParser) (progDesc "Check ZFS kernel versions for compatibility"))
+    <> command "macros"   (info (YamlMacros <$> yamlOptionsParser) (progDesc "Load Yaml Macros"))
   )
 
 -- Combine global options with the command parser
