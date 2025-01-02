@@ -12,7 +12,7 @@ import GHC.Generics (Generic)
 import qualified Data.Yaml as Y
 import qualified Data.ByteString.Char8 as BS
 import Data.Yaml.Combinators
-import Data.YAML.Aeson
+import Data.Yaml.Aeson
 import Data.Text (Text)
 import Data.Vector (Vector)
 import qualified Data.Vector as V
@@ -36,36 +36,40 @@ import System.Process
 import CommandLine
 import Options.Applicative.Types (ParserM, OptVisibility)
 
-type KnifeSchema [schema| {
-                         name: Text
-                       , description: Text
-                       , author: {
-                           name: Text
-                         , email: Text
-                       }
-                       , copyright: {
-                           holder: Text
-                         , year: Int
-                       }
-                       , knives: List {
-                           knife: {
-                             command: Text
-                           , option: {
-                               optype: Text
-                             , long: Text
-                             , short: Text
-                             , meta: Text
-                             , parmtype: Text
-                             , help: Text
-                           }
-                           , action: {
-                               List: { when: List: { Text }}
-                               otherwise: List: { Text }
-                           }
-                         }
-                       }
-                     }
-                 |]
+type KnifeDocument = [schema|
+{
+    name: Text,
+    description: Text,
+    author: {
+        name: Text,
+        email: Text
+    },
+    copyright: {
+        holder: Text,
+        year: Int
+    },
+    knives: List {
+        knife: {
+            command: Text,
+            option: List {
+                optype: Text,
+                long: Text,
+                short: Text,
+                help: Text
+            },
+            action: {
+                exe: List Text,
+                unless: List Text,
+                when: List {
+                    conditionName: Text,
+                    commands: List Text
+                },
+                otherwise: List Text 
+            }
+        }
+    }
+}
+|]
 
 --- data ParmType = PTInt 
 ---               | PTFloat 
