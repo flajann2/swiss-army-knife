@@ -12,7 +12,7 @@ import GHC.Generics (Generic)
 import qualified Data.Yaml as Y
 import qualified Data.ByteString.Char8 as BS
 import Data.Yaml.Combinators
-import Data.Yaml.Aeson
+import Data.YAML.Aeson (decode1)
 import Data.Text (Text)
 import Data.Vector (Vector)
 import qualified Data.Vector as V
@@ -36,7 +36,7 @@ import System.Process
 import CommandLine
 import Options.Applicative.Types (ParserM, OptVisibility)
 
-type KnifeDocument = [schema|
+type KnifeSchema = [schema|
 {
     name: Text,
     description: Text,
@@ -70,6 +70,67 @@ type KnifeDocument = [schema|
     }
 }
 |]
+
+-- Define your data types
+data KnifeDocument = KnifeDocument
+    { name        :: Text
+    , description :: Text
+    , author      :: Author
+    , copyright   :: Copyright
+    , knives      :: [Knife]
+    } deriving (Show, Generic)
+
+data Author = Author
+    { authorName  :: Text
+    , authorEmail :: Text
+    } deriving (Show, Generic)
+
+data Copyright = Copyright
+    { holder :: Text
+    , year   :: Int
+    } deriving (Show, Generic)
+
+data Knife = Knife
+    { command :: Text
+    , options :: [Option]
+    , action  :: Action
+    } deriving (Show, Generic)
+
+data Option = Option
+    { optype :: Text
+    , long   :: Text
+    , short  :: Text
+    , help   :: Text
+    } deriving (Show, Generic)
+
+data Action = Action
+    { exe      :: [Text]
+    , unless   :: [Text]
+    , when     :: [(Text, [Text])]  -- Condition name and corresponding commands.
+    , otherwise:: [Text]
+    } deriving (Show, Generic)
+
+-- Make all data types instances of FromJSON for Aeson decoding.
+instance FromJSON KnifeDocument
+instance FromJSON Author
+instance FromJSON Copyright
+instance FromJSON Knife
+instance FromJSON Option
+instance FromJSON Action
+
+-- Main function to read and decode the YAML file.
+parseYaml :: IO ()
+parseYaml = do
+    -- Read the YAML file.
+    yamlData <- LBS8.readFile "playground/sampleKnife.yaml"
+    
+    -- Decode the YAML data into a JSON-compatible format.
+    case decode1 yamlData of
+        Left err -> putStrLn $ "Error parsing YAML: " ++ show err
+        Right value -> case fromJSON value of  -- Use fromJSON to convert to your data type.
+            Error msg -> putStrLn $ "Failed to decode JSON: " ++ msg  -- Handle decoding errors.
+            Success config -> print (config :: KnifeDocument) -- Successfully parsed configuration.
+
 
 --- data ParmType = PTInt 
 ---               | PTFloat 
