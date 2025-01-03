@@ -7,10 +7,12 @@
 
 module Yaml.Parser where
 
+import Control.Exception
 import System.IO
 import GHC.Generics (Generic)
 import qualified Data.Yaml as Y
-import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Char8 as BS8
 import Data.Yaml.Combinators
 import Data.YAML.Aeson (decode1)
 import Data.Text (Text)
@@ -81,8 +83,8 @@ data KnifeDocument = KnifeDocument
     } deriving (Show, Generic)
 
 data Author = Author
-    { authorName  :: Text
-    , authorEmail :: Text
+    { name  :: Text
+    , email :: Text
     } deriving (Show, Generic)
 
 data Copyright = Copyright
@@ -111,26 +113,57 @@ data Action = Action
     } deriving (Show, Generic)
 
 -- Make all data types instances of FromJSON for Aeson decoding.
-instance FromJSON KnifeDocument
-instance FromJSON Author
-instance FromJSON Copyright
-instance FromJSON Knife
-instance FromJSON Option
-instance FromJSON Action
+instance FromJSON KnifeDocument where 
+  parseJSON = genericParseJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
+
+instance FromJSON Author where 
+  parseJSON = genericParseJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
+
+instance FromJSON Copyright where 
+  parseJSON = genericParseJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
+
+instance FromJSON Knife where 
+  parseJSON = genericParseJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
+
+instance FromJSON Option where 
+  parseJSON = genericParseJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
+
+instance FromJSON Action where 
+  parseJSON = genericParseJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
+
+--- instance FromJSON KnifeDocument
+--- instance FromJSON Author
+--- instance FromJSON Copyright
+--- instance FromJSON Knife
+--- instance FromJSON Option
+--- instance FromJSON Action
 
 -- Main function to read and decode the YAML file.
 parseYaml :: IO ()
 parseYaml = do
-    -- Read the YAML file.
-    yamlData <- LBS8.readFile "playground/sampleKnife.yaml"
-    
-    -- Decode the YAML data into a JSON-compatible format.
-    case decode1 yamlData of
-        Left err -> putStrLn $ "Error parsing YAML: " ++ show err
-        Right value -> case fromJSON value of  -- Use fromJSON to convert to your data type.
-            Error msg -> putStrLn $ "Failed to decode JSON: " ++ msg  -- Handle decoding errors.
-            Success config -> print (config :: KnifeDocument) -- Successfully parsed configuration.
+  yamlData <- LBS8.readFile "playground/sampleknife.yaml" 
+  case Y.decodeEither' yamlData of 
+    Left err -> 
+      putStrLn $ "Error parsing YAML: " ++ show err 
+    Right yamlValue -> do
+      let jsonByteString = encode yamlValue :: BS.ByteString 
+      case eitherDecodeWithSchema (toSchemaDef KnifeDocument :: Schema KnifeDocument) jsonByteString of
+        Left err -> 
+          putStrLn $ "Error parsing JSON: " ++ show err 
+        Right config -> 
+          -- Handle successful parsing 
+          print config
 
+---    -- Read the YAML file.
+---    yamlData <- BS.readFile "playground/sampleknife.yaml"
+---    let yamlData' = LBS8.fromStrict yamlData
+---    
+---    -- Decode the YAML data into a JSON-compatible format.
+---    case decode1 yamlData' of
+---        Left err    -> putStrLn $ "Error parsing YAML: " ++ show err
+---        Right value -> case eitherDecode value of
+---            Left msg     -> putStrLn $ "Failed to decode JSON: " ++ msg
+---            Right config -> print (config :: KnifeDocument)
 
 --- data ParmType = PTInt 
 ---               | PTFloat 
