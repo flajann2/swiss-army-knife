@@ -141,29 +141,16 @@ instance FromJSON Action where
 -- Main function to read and decode the YAML file.
 parseYaml :: IO ()
 parseYaml = do
-  yamlData <- LBS8.readFile "playground/sampleknife.yaml" 
-  case Y.decodeEither' yamlData of 
-    Left err -> 
-      putStrLn $ "Error parsing YAML: " ++ show err 
-    Right yamlValue -> do
-      let jsonByteString = encode yamlValue :: BS.ByteString 
-      case eitherDecodeWithSchema (toSchemaDef KnifeDocument :: Schema KnifeDocument) jsonByteString of
-        Left err -> 
-          putStrLn $ "Error parsing JSON: " ++ show err 
-        Right config -> 
-          -- Handle successful parsing 
-          print config
-
----    -- Read the YAML file.
----    yamlData <- BS.readFile "playground/sampleknife.yaml"
----    let yamlData' = LBS8.fromStrict yamlData
----    
----    -- Decode the YAML data into a JSON-compatible format.
----    case decode1 yamlData' of
----        Left err    -> putStrLn $ "Error parsing YAML: " ++ show err
----        Right value -> case eitherDecode value of
----            Left msg     -> putStrLn $ "Failed to decode JSON: " ++ msg
----            Right config -> print (config :: KnifeDocument)
+  -- Read the YAML file.
+  yamlData <- BS.readFile "playground/sampleknife.yaml"
+  let yamlData' = LBS8.fromStrict yamlData
+  
+  -- Decode the YAML data into a JSON-compatible format.
+  case decode1 yamlData' of
+      Left err    -> putStrLn $ "Error parsing YAML: " ++ show err
+      Right value -> case eitherDecode value of
+          Left msg     -> putStrLn $ "Failed to decode JSON: " ++ msg
+          Right config -> print (config :: KnifeDocument)
 
 --- data ParmType = PTInt 
 ---               | PTFloat 
