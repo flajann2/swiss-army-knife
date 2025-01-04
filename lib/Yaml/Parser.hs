@@ -15,7 +15,8 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BS8
 import Data.Yaml.Combinators
 import Data.YAML.Aeson (decode1)
-import Data.Text (Text)
+import Data.Text (Text) 
+import qualified Data.Text as T
 import Data.Vector (Vector)
 import qualified Data.Vector as V
 
@@ -23,7 +24,7 @@ import Network.HTTP.Simple
 
 import Data.Aeson
 import Data.Aeson.Schema
-import Data.Aeson.Schema.Internal
+import qualified Data.Aeson.Schema.Internal as DASI 
  
 import Data.Bool (bool)
 import Data.List (isInfixOf)
@@ -141,22 +142,31 @@ instance FromJSON Action where
 -- Main function to read and decode the YAML file.
 parseYaml :: IO ()
 parseYaml = do
-  yamlData <- LBS.readFile "playground/sampleknife.yaml" 
-  case Y.decodeEither' yamlData of 
-    Left err -> putStrLn $ "Error parsing YAML: " ++ show err 
-    Right yamlValue -> do
-      
-      -- Convert the decoded YAML value to JSON.
-      let jsonValue = toJSON yamlValue
-      
-      -- Validate against the schema.
-      case validate KnifeSchema jsonValue of 
-        Left err -> putStrLn $ "Error validating JSON against schema: " ++ show err 
-        Right config -> do 
-          -- Handle successful parsing 
-          print (config :: KnifeDocument)
+  obj <- either fail return =<<
+    eitherDecodeFileStrict "playground/sampleknife.yaml" :: IO (DASI.Object KnifeSchema)
 
+  -- print all the users' ids
+  print [get| obj.knives[].knife.command |]
 
+  flip mapM_ [get| obj.knives[].knife.action |] $ \action -> do
+    -- for each action, print out some information
+    putStrLn $ "Details for action.exe #"  ++ show [get| action.exe |] ++ ":"
+    putStrLn $ "Details for action.when #" ++ show [get| action.when |] ++ ":"
+
+---   yamlData <- LBS.readFile "playground/sampleknife.yaml" 
+---   case Y.decodeEither' yamlData of 
+---     Left err -> putStrLn $ "Error parsing YAML: " ++ show err 
+---     Right yamlValue -> do
+---       
+---       -- Convert the decoded YAML value to JSON.
+---       let jsonValue = toJSON yamlValue
+---       
+---       -- Validate against the schema.
+---       case validate KnifeSchema jsonValue of 
+---         Left err -> putStrLn $ "Error validating JSON against schema: " ++ show err 
+---         Right config -> do 
+---           -- Handle successful parsing 
+---           print (config :: KnifeDocument)
 
 ---   -- Read the YAML file.
 ---   yamlData <- LBS8.readFile "playground/sampleknife.yaml"
