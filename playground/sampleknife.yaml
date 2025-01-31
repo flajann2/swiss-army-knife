@@ -7,8 +7,7 @@ copyright:
   holder: Atomlogik.de
   year: 2024
 knives:
-  knife:
-    command: ExtIP
+  - knife: ExtIP
     option:
       optype: switch
       long: nolocation
@@ -32,8 +31,7 @@ knives:
         - echo "show IPv4"
       exe:
         - echo "The Grand Final"
-  knife:
-    command: Kernel
+  - knife: Kernel
     option:
       optype: switch
       long: justversion
@@ -41,8 +39,7 @@ knives:
       help: Just display the numerical version number, no adjoining texet.
     action:
       exe: echo "some action and we are ignoring the switch for now"
-  knife:
-    command: Sleep
+  - knife: Sleep
     option:
       optype: parm
       long: wait
