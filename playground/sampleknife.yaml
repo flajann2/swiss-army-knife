@@ -8,31 +8,35 @@ copyright:
   year: 2024
 knives:
   - knife: ExtIP
-    option:
+    options: 
+    - option:
       optype: switch
       long: nolocation
       short: n
       help: Don't display location information
-    option:
+    - option:
       optype: switch
       long: ipv6
       short: i
       help: Display the IPv6 address
     action:
-      exe:
-        - ls
-        - pwd
-        - echo "hello world"
-      unless: nolocation
-        - echo "show location"
-      when: ipv6
-        - echo "show IPv6"
-      otherwise:
-        - echo "show IPv4"
-      exe:
-        - echo "The Grand Final"
+      - exe:
+          bash: |
+            ls
+            pwd
+            echo "hello world"
+          unless: nolocation |
+            echo "show location"
+          whens:
+            - when: ipv6 |
+                echo "show IPv6"
+              otherwise: |
+                echo "show IPv4"
+      - exe: |
+            echo "The Grand Final"
   - knife: Kernel
-    option:
+    options:
+    - option:
       optype: switch
       long: justversion
       short: j
@@ -40,24 +44,29 @@ knives:
     action:
       exe: echo "some action and we are ignoring the switch for now"
   - knife: Sleep
-    option:
+    options:
+    - option:
       optype: parm
       long: wait
       short: w
       meta: SECONDS
       parmtype: Int
       help: Seconds to wait before going to sleep
-    option:
+    - option:
       optype: switch
       long: shutdown
       short: H
       help: Shutdown the system, not sleep
     action:
-      when: wait
-        - sleep ${SECONDS}
-        - echo "wait ${SECONDS} seconds then hibernate"
-      when: shutdown
-        - echo "halt"
+      whens:
+        - when: wait
+          bash: |
+                sleep ${SECONDS}
+                echo "wait ${SECONDS} seconds then hibernate"
+        - when: shutdown
+          bash: |
+                echo "halt"
       otherwise:
-        - echo "hibernate"
+        bash: |
+          echo "hibernate"
         

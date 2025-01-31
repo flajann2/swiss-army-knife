@@ -12,48 +12,89 @@
   "knives": [
     {
       "knife": "ExtIP",
-      "option": {
-        "optype": "switch",
-        "long": "ipv6",
-        "short": "i",
-        "help": "Display the IPv6 address"
-      },
-      "action": {
-        "exe": [
-          "echo \"The Grand Final\""
-        ],
-        "unless": "nolocation - echo \"show location\"",
-        "when": "ipv6 - echo \"show IPv6\"",
-        "otherwise": [
-          "echo \"show IPv4\""
-        ]
-      }
+      "options": [
+        {
+          "option": null,
+          "optype": "switch",
+          "long": "nolocation",
+          "short": "n",
+          "help": "Don't display location information"
+        },
+        {
+          "option": null,
+          "optype": "switch",
+          "long": "ipv6",
+          "short": "i",
+          "help": "Display the IPv6 address"
+        }
+      ],
+      "action": [
+        {
+          "exe": {
+            "bash": "ls\npwd\necho \"hello world\"\n",
+            "unless": "nolocation | echo \"show location\"",
+            "whens": [
+              {
+                "when": "ipv6 | echo \"show IPv6\"",
+                "otherwise": "echo \"show IPv4\"\n"
+              }
+            ]
+          }
+        },
+        {
+          "exe": "echo \"The Grand Final\"\n"
+        }
+      ]
     },
     {
       "knife": "Kernel",
-      "option": {
-        "optype": "switch",
-        "long": "justversion",
-        "short": "j",
-        "help": "Just display the numerical version number, no adjoining texet."
-      },
+      "options": [
+        {
+          "option": null,
+          "optype": "switch",
+          "long": "justversion",
+          "short": "j",
+          "help": "Just display the numerical version number, no adjoining texet."
+        }
+      ],
       "action": {
         "exe": "echo \"some action and we are ignoring the switch for now\""
       }
     },
     {
       "knife": "Sleep",
-      "option": {
-        "optype": "switch",
-        "long": "shutdown",
-        "short": "H",
-        "help": "Shutdown the system, not sleep"
-      },
+      "options": [
+        {
+          "option": null,
+          "optype": "parm",
+          "long": "wait",
+          "short": "w",
+          "meta": "SECONDS",
+          "parmtype": "Int",
+          "help": "Seconds to wait before going to sleep"
+        },
+        {
+          "option": null,
+          "optype": "switch",
+          "long": "shutdown",
+          "short": "H",
+          "help": "Shutdown the system, not sleep"
+        }
+      ],
       "action": {
-        "when": "shutdown - echo \"halt\"",
-        "otherwise": [
-          "echo \"hibernate\""
-        ]
+        "whens": [
+          {
+            "when": "wait",
+            "bash": "sleep ${SECONDS}\necho \"wait ${SECONDS} seconds then hibernate\"\n"
+          },
+          {
+            "when": "shutdown",
+            "bash": "echo \"halt\"\n"
+          }
+        ],
+        "otherwise": {
+          "bash": "echo \"hibernate\"\n"
+        }
       }
     }
   ]
