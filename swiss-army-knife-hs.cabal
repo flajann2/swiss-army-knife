@@ -67,6 +67,19 @@ executable sak
     , swiss-army-knife-hs
   default-language: GHC2021
 
+executable sakd
+  main-is: Sakd.hs
+  other-modules:
+      Paths_swiss_army_knife_hs
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , optparse-applicative
+    , swiss-army-knife-hs
+  default-language: GHC2021
+
 test-suite swiss-army-knife-hs-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs

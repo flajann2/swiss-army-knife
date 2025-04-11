@@ -1,5 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | Module    : CommandLine
+-- Description : Defines the command line UI
+-- Copyright   : (c) 2025 Fred Mitchell & Atomlogik
+-- License     : MIT
+-- Maintainer  : fred.mitchell@atomlogik.de
+-- Stability   : stable
+-- Portability : portable
 module CommandLine where
 
 import Options.Applicative

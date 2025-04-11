@@ -1,5 +1,13 @@
 -- main for Swiss Army Knife, cli.
 
+{- | Executable  : sak
+     Description : Executable for the Swiss Army Knife CLI.
+     Copyright   : (c) 2025 Fred Mitchell & Atomlogik
+     License     : MIT
+     Maintainer  : fred.mitchell@atomlogik.de
+     Stability   : stable
+     Portability : portable
+-}
 module Main where
 
 import Options.Applicative
