@@ -1,4 +1,12 @@
 
+-- | Module    : Knives.ZfsCheck
+-- Description : Knife to check ZFS version compatability.
+-- Copyright   : (c) 2025 Fred Mitchell & Atomlogik
+-- License     : MIT
+-- Maintainer  : fred.mitchell@atomlogik.de
+-- Stability   : stable
+-- Portability : portable
+
 module Knives.ZfsCheck where
 
 import CommandLine

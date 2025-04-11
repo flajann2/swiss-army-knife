@@ -1,3 +1,11 @@
+-- | Module    : Knives.Kernel
+-- Description : Knife to get Kernel information.
+-- Copyright   : (c) 2025 Fred Mitchell & Atomlogik
+-- License     : MIT
+-- Maintainer  : fred.mitchell@atomlogik.de
+-- Stability   : stable
+-- Portability : portable
+
 module Knives.Kernel where
 
 import CommandLine

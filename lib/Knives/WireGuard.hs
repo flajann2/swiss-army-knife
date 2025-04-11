@@ -1,5 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | Module    : Knives.WireGuard
+-- Description : Knife to manage WireGuard activations.
+-- Copyright   : (c) 2025 Fred Mitchell & Atomlogik
+-- License     : MIT
+-- Maintainer  : fred.mitchell@atomlogik.de
+-- Stability   : stable
+-- Portability : portable
+
 module Knives.WireGuard where
 
 import Utils (systemctl)

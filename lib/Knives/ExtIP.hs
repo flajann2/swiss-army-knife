@@ -1,5 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | Module    : Knives.ExtIP
+-- Description : Knife to retrive the external Internet IP.
+-- Copyright   : (c) 2025 Fred Mitchell & Atomlogik
+-- License     : MIT
+-- Maintainer  : fred.mitchell@atomlogik.de
+-- Stability   : stable
+-- Portability : portable
+
 module Knives.ExtIP where
 
 import CommandLine

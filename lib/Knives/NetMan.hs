@@ -1,3 +1,11 @@
+-- | Module    : Knives.NetMan
+-- Description : Knife to manage the NetworkManager.
+-- Copyright   : (c) 2025 Fred Mitchell & Atomlogik
+-- License     : MIT
+-- Maintainer  : fred.mitchell@atomlogik.de
+-- Stability   : stable
+-- Portability : portable
+
 module Knives.NetMan where
 
 import Utils
