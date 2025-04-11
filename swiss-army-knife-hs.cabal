@@ -5,7 +5,7 @@ cabal-version: 1.14
 -- see: https://github.com/sol/hpack
 
 name:           swiss-army-knife-hs
-version:        0.1.0.4
+version:        0.2.0.5
 description:    Please see the README on GitHub at <https://github.com/githubuser/swiss-army-knife-hs#readme>
 homepage:       https://github.com/flajann2/swiss-army-knife-hs#readme
 bug-reports:    https://github.com/flajann2/swiss-army-knife-hs/issues
