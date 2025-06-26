@@ -1,0 +1,11 @@
+[Unit]
+Description=Swiss Army Knife Daemon
+After=network.target
+
+[Service]
+User=sakd
+ExecStart=/path/to/your/haskell/sakd
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

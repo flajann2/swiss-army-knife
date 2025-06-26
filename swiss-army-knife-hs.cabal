@@ -52,6 +52,7 @@ library
     , directory
     , filepath
     , resolv
+    , dbus
   default-language: GHC2021
 
 executable sak
@@ -78,6 +79,7 @@ executable sakd
       base >=4.7 && <5
     , optparse-applicative
     , swiss-army-knife-hs
+    , dbus
   default-language: GHC2021
 
 test-suite swiss-army-knife-hs-test
