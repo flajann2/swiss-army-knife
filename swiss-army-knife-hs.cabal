@@ -1,11 +1,11 @@
-cabal-version: 1.14
+cabal-version: 3.16
 
 -- This file has been generated from package.yaml by hpack version 0.35.2.
 --
 -- see: https://github.com/sol/hpack
 
 name:           swiss-army-knife-hs
-version:        1.0.0.1
+version:        1.0.0.2
 description:    Please see the README on GitHub at <https://github.com/githubuser/swiss-army-knife-hs#readme>
 homepage:       https://github.com/flajann2/swiss-army-knife-hs#readme
 bug-reports:    https://github.com/flajann2/swiss-army-knife-hs/issues
