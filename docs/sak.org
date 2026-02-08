@@ -1,0 +1,157 @@
+#+TITLE: MYAPP
+#+AUTHOR: Your Name
+#+EMAIL: your.email@example.com
+#+DATE: January 2025
+
+#+EXPORT_FILE_NAME: myapp.1
+#+OPTIONS: toc:nil num:nil author:nil timestamp:nil
+#+PANDOC_OPTIONS: -s -t man
+#+PANDOC_METADATA: section=1
+#+PANDOC_METADATA: header="myapp 1.0.0"
+#+PANDOC_METADATA: footer="User Commands"
+
+* NAME
+myapp - A Haskell application for processing data
+
+* SYNOPSIS
+*myapp* [/OPTION/]... [/FILE/]...
+
+* DESCRIPTION
+MyApp is a Haskell-based tool that processes input files and generates
+structured output. It supports multiple input formats and provides
+extensive configuration options.
+
+The application follows functional programming principles and provides
+efficient processing of large datasets.
+
+* OPTIONS
+*-h, --help*
+: Display help message and exit
+
+*-v, --version*
+: Show version information
+
+*-c, --config* /FILE/
+: Use configuration file /FILE/ instead of default
+
+*-o, --output* /FILE/
+: Write output to /FILE/ instead of stdout
+
+*-f, --format* /FORMAT/
+: Output format: json, yaml, csv (default: json)
+
+*--verbose*
+: Enable verbose logging
+
+*--dry-run*
+: Show what would be done without executing
+
+* EXAMPLES
+Process a single file:
+#+BEGIN_EXAMPLE
+myapp input.txt
+#+END_EXAMPLE
+
+Use custom configuration:
+#+BEGIN_EXAMPLE
+myapp -c ~/.config/myapp/custom.conf data/*.txt
+#+END_EXAMPLE
+
+Generate YAML output:
+#+BEGIN_EXAMPLE
+myapp -f yaml -o results.yaml input.json
+#+END_EXAMPLE
+
+Dry run with verbose output:
+#+BEGIN_EXAMPLE
+myapp --dry-run --verbose large-dataset.csv
+#+END_EXAMPLE
+
+* CONFIGURATION
+MyApp reads configuration from the following locations (in order):
+1. Command-line options (highest priority)
+2. =$XDG_CONFIG_HOME/myapp/config.yaml=
+3. =~/.config/myapp/config.yaml=
+4. =/etc/myapp/config.yaml= (lowest priority)
+
+** Configuration Format
+#+BEGIN_EXAMPLE
+# ~/.config/myapp/config.yaml
+input:
+  format: auto
+  encoding: utf-8
+output:
+  format: json
+  pretty: true
+processing:
+  parallel: true
+  chunk_size: 1000
+#+END_EXAMPLE
+
+* FILES
+*/etc/myapp/config.yaml*
+: System-wide configuration file
+
+*~/.config/myapp/config.yaml*
+: User-specific configuration
+
+*~/.cache/myapp/*
+: Cache directory for temporary files
+
+* ENVIRONMENT VARIABLES
+*MYAPP_CONFIG*
+: Override default configuration file location
+
+*MYAPP_CACHE_DIR*
+: Override default cache directory
+
+*MYAPP_LOG_LEVEL*
+: Set logging level (debug, info, warn, error)
+
+* EXIT STATUS
+The myapp utility exits with one of the following values:
+
+*0*
+: Success
+
+*1*
+: General error
+
+*2*
+: Invalid command line arguments
+
+*64*
+: Input file not found or not readable
+
+*65*
+: Invalid input format
+
+* DIAGNOSTICS
+Common error messages and their meanings:
+
+"Configuration file not found"
+: The specified config file doesn't exist
+
+"Invalid JSON in input"
+: Input file contains malformed JSON
+
+"Permission denied"
+: Insufficient permissions to read input or write output
+
+* SEE ALSO
+*pandoc*(1), *jq*(1), *yq*(1)
+
+Related Haskell tools: *cabal*(1), *stack*(1)
+
+Project homepage: https://github.com/yourusername/myapp
+
+* BUGS
+Report bugs to: https://github.com/yourusername/myapp/issues
+
+* COPYRIGHT
+Copyright © 2025 Your Name. License GPLv3+: GNU GPL version 3 or later.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+* AUTHOR
+Written by Your Name <your.email@example.com>.
