@@ -4,14 +4,15 @@ cabal-version: 3.16
 --
 -- see: https://github.com/sol/hpack
 
-name:           swiss-army-knife-hs
-version:        1.0.0.2
-description:    Please see the README on GitHub at <https://github.com/githubuser/swiss-army-knife-hs#readme>
-homepage:       https://github.com/flajann2/swiss-army-knife-hs#readme
-bug-reports:    https://github.com/flajann2/swiss-army-knife-hs/issues
+name:           swiss-army-knife
+version:        1.1.0.0
+synopsis:       A collection of small tools to make life a bit easier for the command-line.
+description:    Please see the README on GitHub at <https://github.com/githubuser/swiss-army-knife#readme>
+homepage:       https://github.com/flajann2/swiss-army-knife#readme
+bug-reports:    https://github.com/flajann2/swiss-army-knife/issues
 author:         Fred Mitchell
 maintainer:     fred.mitchell@atomlogik.de
-copyright:      2024 Fred Mitchell & Atomlogik
+copyright:      2024-2026 Fred Mitchell & Atomlogik
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
@@ -20,7 +21,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/flajann2/swiss-army-knife-hs
+  location: https://github.com/flajann2/swiss-army-knife
 
 library
   exposed-modules:
@@ -36,7 +37,7 @@ library
       Knives.SysNet
       Knives.NetMan
   other-modules:
-      Paths_swiss_army_knife_hs
+      Paths_swiss_army_knife
   hs-source-dirs:
       lib
   ghc-options: -O2 -Wall
@@ -51,30 +52,30 @@ library
     , directory
     , filepath
     , resolv
-  default-language: GHC2021
+  default-language: GHC2024
 
 executable sak
   main-is: SwissArmyKnife.hs
   other-modules:
-      Paths_swiss_army_knife_hs
+      Paths_swiss_army_knife
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , optparse-applicative
-    , swiss-army-knife-hs
-  default-language: GHC2021
+    , swiss-army-knife
+  default-language: GHC2024
 
 test-suite swiss-army-knife-hs-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_swiss_army_knife_hs
+      Paths_swiss_army_knife
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , swiss-army-knife-hs
-  default-language: GHC2021
+    , swiss-army-knife
+  default-language: GHC2024

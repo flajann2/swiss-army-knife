@@ -3,7 +3,7 @@
 module Knives.Version where
 
 import CommandLine
-import qualified Paths_swiss_army_knife_hs as SAK
+import qualified Paths_swiss_army_knife as SAK
 import Data.Version (showVersion)
 
 knifeVersion :: VersionOptions -> IO ()
