@@ -1,18 +1,24 @@
-* swiss-army-knife
-  A collection of powerful but usefuli small tools.
-  Written in Haskell, the most powerful language on
-  the planet.
-
-  Currently, only Arch is supported, BTW. I am open to pull requests for
-  other distros. There are a lot of subtle differences and I don't 
-  have the time to support everything.
+* swiss-army-knife :TOC_7_gh:
+  - [[#created-by][Created By]]
+  - [[#versions][Versions]]
+  - [[#introduction][Introduction]]
+  - [[#documentation][Documentation]]
+    - [[#sak---help][sak --help]]
+    - [[#sak-extip][sak extip]]
+    - [[#sak-kernel][sak kernel]]
+    - [[#sak-sleep][sak sleep]]
+    - [[#sak-zfscheck][sak zfscheck]]
+    - [[#sak-wg][sak wg]]
+    - [[#sak-nm][sak nm]]
+    - [[#sak-sn][sak sn]]
+  - [[#examples][Examples]]
 
 ** Created By
    Fred Mitchell & Atomlogik
 
 ** Versions
-   + 1.1.0.0 - Hackage release, rename to swiss-army-knife (dropping the
-                "-hs" from the name. AUR will pull from Hackage instead
+   + 1.1.0.0 - Hackage release, renamed to swiss-army-knife (dropping the
+                "-hs" from the name. AUR will pull from Hackage instead.
                 of GitHub.
    + 1.0.0.1 - enable and disable daemons, wg -l list has an extra field.
               - Changelog.org removed. Basically a duplication of Versions here.
@@ -35,9 +41,10 @@
 ** Introduction
    Swiss-Army-Knife is a collection of useful
    tools that you can do quickly.
-
-   Currently, only Arch linux is supported. I am open to pull requests
-   to support other distros. 
+   
+   This is now in Hackage and the AUR. So in theory,
+   it can run "anywhere", though I have not had the time to test this,
+   so I am open to comments and pull requests.
 
 ** Documentation
    These are the current "knives" implemented. More to come. Open
