@@ -80,16 +80,12 @@
     Now supports enabling and disabling of the underlying daemon.
 
 ** Examples
-   + sak extip
-     Will list your external IP and location information
-   + sak wg -l
-     (If you are using wg_quick) will list all of your available WG vpns,
-     as well as their active and enabled statuses.
-   + sak wg -d
-     Will deactivate (but not disable) all wireguard VPNs.
-   + sak wg -D
-     Will disable (but not deactivate) all WireGuard VPNs.
-   + sak sn -A
-     Will enable and start systemd-networkd.
-   + sak nm -D
-     Will disable and stop NetworkManager.
+   | Command   | Description                                                                                                        |
+   |-----------+--------------------------------------------------------------------------------------------------------------------|
+   | sak extip | Will list your external IP and location information                                                                |
+   | sak wg -l | (If you are using wg_quick) will list all of your available WG vpns, as well as their active and enabled statuses. |
+   | sak wg -d | Will deactivate (but not disable) all wireguard VPNs.                                                              |
+   | sak wg -D | Will disable (but not deactivate) all WireGuard VPNs.                                                              |
+   | sak sn -A | Will enable and start systemd-networkd.                                                                            |
+   | sak nm -D | Will disable and stop NetworkManager.                                                                              |
+   |-----------+--------------------------------------------------------------------------------------------------------------------|
