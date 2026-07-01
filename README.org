@@ -1,6 +1,7 @@
 * swiss-army-knife :TOC_7_gh:
   - [[#created-by][Created By]]
   - [[#introduction][Introduction]]
+  - [[#installation][Installation]]
   - [[#documentation][Documentation]]
     - [[#sak---help][sak --help]]
     - [[#sak-extip][sak extip]]
@@ -29,7 +30,12 @@
    So some knives will run "anywhere", but some that call out to
    the system for system-specific information may have issues.
    As I find out about them, I will fix them as quickly as I can.
-
+** Installation
+   + using cabal (recommended)
+     cabal update
+     cabal install swiss-army-knife
+   + On Arch from the AUR using aura
+     aura -A swiss-army-knife
 ** Documentation
    These are the current "knives" implemented. More to come. Open
    to suggestions.

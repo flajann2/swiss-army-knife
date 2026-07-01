@@ -1,6 +1,6 @@
 cabal-version: 2.4
 name:           swiss-army-knife
-version:        1.1.0.3
+version:        1.1.0.4
 synopsis:       A collection of small tools to make life a bit easier for the command-line.
 category:       System
 description:    Please see the README on GitHub at <https://github.com/flajann2/swiss-army-knife#readme>
@@ -58,7 +58,7 @@ library
     , process                 >= 1.6.18  && < 1.7
     , resolv                  >= 0.1.2   && < 0.3
     , split                   >= 0.2.5   && < 0.3
-  default-language: GHC2024
+  default-language: GHC2021
 
 executable sak
   main-is: SwissArmyKnife.hs
@@ -73,9 +73,9 @@ executable sak
       base                    >= 4.18    && < 5
     , optparse-applicative    >= 0.18    && < 0.20
     , swiss-army-knife
-  default-language: GHC2024
+  default-language: GHC2021
 
-test-suite swiss-army-knife-hs-test
+test-suite swiss-army-knife-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   autogen-modules:
@@ -88,4 +88,4 @@ test-suite swiss-army-knife-hs-test
   build-depends:
       base                    >= 4.18    && < 5
     , swiss-army-knife
-  default-language: GHC2024
+  default-language: GHC2021

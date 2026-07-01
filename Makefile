@@ -18,6 +18,10 @@ VERSION := $(shell grep -m1 '^version:' $(CABAL_FILE) | cut -d: -f2 | tr -d ' \t
 
 TARBALL := dist-newstyle/sdist/$(PKG_NAME)-$(VERSION).tar.gz
 
+# Official Hackage tarball URL (this is what AUR users will actually download)
+HACKAGE_TARBALL_URL := https://hackage.haskell.org/package/$(PKG_NAME)-$(VERSION)/$(PKG_NAME)-$(VERSION).tar.gz
+HACKAGE_TARBALL     := /tmp/$(PKG_NAME)-$(VERSION).tar.gz
+
 # AUR destination directory (override with AUR_DEST=... if needed)
 AUR_DEST ?= /development/aur/swiss-army-knife
 
@@ -29,7 +33,7 @@ help:
 	@echo "  make sdist              - Regenerate CHANGELOG.md and build source tarball"
 	@echo "  make upload-candidate   - Upload as Hackage candidate (testing only)"
 	@echo "  make publish            - Publish release on Hackage"
-	@echo "  make aur-prepare        - Full prep: sdist + update PKGBUILD + copy to AUR dir"
+	@echo "  make aur-prepare        - Full prep: sdist + update PKGBUILD (official Hackage hash) + copy to AUR"
 	@echo "  make aur-publish        - Prepare + commit + push to AUR (with confirmation)"
 	@echo "  make clean              - Clean build artifacts and generated files"
 	@echo "  make version            - Show detected package version"
@@ -87,16 +91,29 @@ clean:
 # AUR targets
 # -----------------------------------------------------------------------------
 
-# Update version and sha256sums in PKGBUILD from the freshly built tarball
+# Update version and sha256sums in PKGBUILD using the *official* Hackage tarball
 aur-update-pkgbuild: sdist
 	@echo "→ Updating PKGBUILD to version $(VERSION)"
 	@# Reset pkgrel to 1 when version changes
 	@sed -i 's/^pkgver=.*/pkgver=$(VERSION)/' PKGBUILD
 	@sed -i 's/^pkgrel=.*/pkgrel=1/' PKGBUILD
-	@# Compute and set correct sha256sum
-	@SHA=$$(sha256sum $(TARBALL) | cut -d' ' -f1); \
+
+	@echo "→ Downloading official tarball from Hackage to get correct hash..."
+	@wget -q -O $(HACKAGE_TARBALL) $(HACKAGE_TARBALL_URL) || \
+		(echo "ERROR: Failed to download from Hackage. Is the version published?"; exit 1)
+
+	@# Compute sha256 from the *official* Hackage tarball (not the local one)
+	@SHA=$$(sha256sum $(HACKAGE_TARBALL) | cut -d' ' -f1); \
 	sed -i "s/^sha256sums=.*/sha256sums=('$$SHA')/" PKGBUILD
-	@echo "→ PKGBUILD updated for version $(VERSION)"
+	@echo "→ PKGBUILD updated with official Hackage hash for version $(VERSION)"
+
+	@# Optional: warn if local and Hackage tarballs differ
+	@LOCAL_SHA=$$(sha256sum $(TARBALL) | cut -d' ' -f1); \
+	if [ "$$LOCAL_SHA" != "$$SHA" ]; then \
+		echo "⚠️  WARNING: Local tarball hash differs from Hackage hash!"; \
+		echo "   This can happen if you uploaded a different tarball than the one just built."; \
+	fi
+	@rm -f $(HACKAGE_TARBALL)
 
 # Regenerate .SRCINFO from the updated PKGBUILD
 aur-generate-srcinfo:
@@ -128,15 +145,16 @@ aur-publish: aur-prepare
 	fi && \
 	git add PKGBUILD .SRCINFO && \
 	if git diff --cached --quiet; then \
-		echo "No changes to commit."; \
+		echo "✅ No changes detected — AUR package is already up to date with version $(VERSION)."; \
 	else \
-		git commit -m "Update to $(VERSION)"; \
-		echo "✅ Committed: Update to $(VERSION)"; \
-		echo ""; \
-		read -p "Push to AUR now? [y/N] " confirm; \
+		git commit -m "Update to $(VERSION)" && \
+		echo "✅ Committed: Update to $(VERSION)" && \
+		echo "" && \
+		read -p "Push to AUR now? [y/N] " confirm && \
 		if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
 			git push && echo "✅ Successfully pushed to AUR."; \
 		else \
-			echo "Push cancelled. You can push manually later with: git push"; \
+			echo "ℹ️  Push skipped. You can push manually later with:"; \
+			echo "     cd $(AUR_DEST) && git push"; \
 		fi \
 	fi

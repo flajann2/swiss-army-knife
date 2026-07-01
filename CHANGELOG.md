@@ -1,8 +1,7 @@
-# 1.1.0.3 - 2026-07-01
+# 1.1.0.4 - 2026-07-01
 
 - Adjusted cabal version to be lower for better coverage.
-
-# 1.1.0.2 — 2026-07-01
+- GHC2021 for better coverage
 
 ## Added
 
