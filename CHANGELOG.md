@@ -1,0 +1,48 @@
+# 1.1.0.0 — 2026-07-01
+
+## Added
+
+- Cross-distro `sak kernel` command
+  - Now works on Arch, Debian, Ubuntu, Linux Mint, Pop!<sub>OS</sub>, Fedora, RHEL, CentOS, Rocky Linux, and AlmaLinux
+  - Detects running kernel via `uname -r`
+  - Shows installed kernels using the native package manager (`pacman`, `dpkg-query`, or `rpm`)
+  - Graceful handling when optional kernel packages (e.g. `linux-lts`) are not installed
+
+## Changed
+
+- `Knives.Kernel` module is now fully distribution-agnostic
+- Cleaner output formatting with proper newlines
+- More robust command execution (no crashes on missing packages)
+
+## Fixed
+
+- Trailing newlines from `readProcess`
+- Ambiguous exception type error on GHC 9.14
+
+# 1.0.0.1 and earlier
+
+## Versions
+
+- 1.1.0.0 - Hackage release, renamed to swiss-army-knife (dropping the "-hs" from the name. AUR will pull from Hackage instead. of GitHub.
+
+- 1.0.0.1 - enable and disable daemons, wg -l list has an extra field.
+
+  - Changelog.org removed. Basically a duplication of Versions here.
+  - version 1.0.0.0 was stillborn. Installation issues fixed
+
+- 0.1.0.4 - fix for install issues with 0.1.0.3
+
+- 0.1.0.3 - 2 new feature, internally invokes sudo, adopted "standard" for 4 number versioning X.Y.Z.W:
+
+  | \#  | Description                                   |
+  |-----|-----------------------------------------------|
+  | X   | Major version (breaking changes)              |
+  | Y   | Minor version (new features)                  |
+  | Z   | Patch version (bug fixes)                     |
+  | W   | Build or revision number (specific iteration) |
+
+  So from now on, this will be applied.
+
+- 0.0.1.1 - new feature added
+
+- 0.0.0.2 - bug fixes

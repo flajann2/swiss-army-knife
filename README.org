@@ -1,6 +1,5 @@
 * swiss-army-knife :TOC_7_gh:
   - [[#created-by][Created By]]
-  - [[#versions][Versions]]
   - [[#introduction][Introduction]]
   - [[#documentation][Documentation]]
     - [[#sak---help][sak --help]]
@@ -15,28 +14,6 @@
 
 ** Created By
    Fred Mitchell & Atomlogik
-
-** Versions
-   + 1.1.0.0 - Hackage release, renamed to swiss-army-knife (dropping the
-                "-hs" from the name. AUR will pull from Hackage instead.
-                of GitHub.
-   + 1.0.0.1 - enable and disable daemons, wg -l list has an extra field.
-              - Changelog.org removed. Basically a duplication of Versions here.
-              - version 1.0.0.0 was stillborn. Installation issues fixed
-   + 0.1.0.4 - fix for install issues with 0.1.0.3
-   + 0.1.0.3 - 2 new feature, internally invokes sudo,
-      adopted "standard" for 4 number versioning X.Y.Z.W:
-
-      | # | Description                                   |
-      |---+-----------------------------------------------|
-      | X | Major version (breaking changes)              |
-      | Y | Minor version (new features)                  |
-      | Z | Patch version (bug fixes)                     |
-      | W | Build or revision number (specific iteration) |
-
-      So from now on, this will be applied.
-   + 0.0.1.1 - new feature added
-   + 0.0.0.2 - bug fixes
       
 ** Introduction
    Swiss-Army-Knife is a collection of useful
@@ -44,7 +21,14 @@
    
    This is now in Hackage and the AUR. So in theory,
    it can run "anywhere", though I have not had the time to test this,
-   so I am open to comments and pull requests.
+   so I am open to comments and pull requests. In particular, it is 
+   gauranteed to run on Arch, and I do have some support for other
+   distros, and that will grow. But I have not had the time to fully
+   test other distros.
+
+   So some knives will run "anywhere", but some that call out to
+   the system for system-specific information may have issues.
+   As I find out about them, I will fix them as quickly as I can.
 
 ** Documentation
    These are the current "knives" implemented. More to come. Open
@@ -58,23 +42,27 @@
     either in IPv4 or IPv6 Useful if you use a VPN
 *** sak kernel
     Will tell you the version of the installed kernel as well
-    as the running version.
+    as the running version. Support is in for Arch, Debian, and
+    RedHat, but only Arch has been tested.
 *** sak sleep
     Will put your system in standby mode.
 *** sak zfscheck
     If you use the zfs from archzfs, sometimes it 
     does not keep up with the latest kernel release.
     Check to see the latest kernel zfs supports before
-    you do a system upgrade.
+    you do a system upgrade. Other distros will probably
+    not have the zfs sync issues that Arch does.
 *** sak wg
     If you use WireGuard for your VPN, manage it from
     here. List your installed WireGuard options,
     and swap among them. you can start, stop, and list your
     WireGuard VPNs.
+
     Now supports enabling and disabling of the underlying daemon.
 *** sak nm
     Manage NetworkManager
     Now supports enabling and disabling of the underlying daemon.
+
 *** sak sn
     Manage systemd-networkd
     Now supports enabling and disabling of the underlying daemon.
