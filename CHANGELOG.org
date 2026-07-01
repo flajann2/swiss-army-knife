@@ -2,7 +2,7 @@
 #+AUTHOR: Fred Mitchell
 #+EMAIL: fred.mitchell@atomlogik.de
 
-* 1.1.0.0 — 2026-07-01
+* 1.1.0.2 — 2026-07-01
 
 ** Added
 - Cross-distro =sak kernel= command
