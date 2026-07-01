@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.4
 name:           swiss-army-knife
-version:        1.1.0.2
+version:        1.1.0.3
 synopsis:       A collection of small tools to make life a bit easier for the command-line.
 category:       System
 description:    Please see the README on GitHub at <https://github.com/flajann2/swiss-army-knife#readme>
