@@ -26,7 +26,8 @@ HACKAGE_TARBALL     := /tmp/$(PKG_NAME)-$(VERSION).tar.gz
 AUR_DEST ?= /development/aur/swiss-army-knife
 
 .PHONY: help changelog sdist upload-candidate publish clean version check \
-        aur-prepare aur-update-pkgbuild aur-generate-srcinfo aur-publish
+        aur-prepare aur-update-pkgbuild aur-generate-srcinfo aur-publish \
+        build  build-static check-static
 
 help:
 	@echo "Available targets:"
@@ -38,6 +39,27 @@ help:
 	@echo "  make clean              - Clean build artifacts and generated files"
 	@echo "  make version            - Show detected package version"
 	@echo "  make check              - Run cabal check"
+	@echo "  make check-static       - Do a static check"
+
+# -----------------------------------------------------------------------------
+# Ensure a static build
+# -----------------------------------------------------------------------------
+build-static:
+	@echo "→ Verifying static build succeeds"
+	cabal build --enable-executable-static
+
+# -----------------------------------------------------------------------------
+# Ensure a dymanic build
+# -----------------------------------------------------------------------------
+build:
+	@echo "→ Verifying dymanic build succeeds"
+	cabal build
+
+check:
+	cabal check
+
+check-static: build-static
+	cabal check
 
 # -----------------------------------------------------------------------------
 # Convert OrgMode changelog to GitHub-flavored Markdown (what Hackage prefers)
@@ -67,12 +89,6 @@ upload-candidate: sdist
 publish: sdist
 	@echo "→ Publishing $(PKG_NAME)-$(VERSION) to Hackage..."
 	cabal upload --publish $(TARBALL)
-
-# -----------------------------------------------------------------------------
-# Quick sanity check
-# -----------------------------------------------------------------------------
-check:
-	cabal check
 
 # -----------------------------------------------------------------------------
 # Show the version that was auto-detected from the .cabal file

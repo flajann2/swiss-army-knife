@@ -1,2 +1,5 @@
+package swiss-army-knife
+  executable-static: True
+
 ignore-project: False
 tests: True

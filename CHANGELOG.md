@@ -1,3 +1,8 @@
+# 1.1.0.5 - 2026-07-11
+
+- Made build static to get around dynamic mixmatch issues with GHC versions.
+- Static made optional for Hackage installs.
+
 # 1.1.0.4 - 2026-07-01
 
 - Adjusted cabal version to be lower for better coverage.
