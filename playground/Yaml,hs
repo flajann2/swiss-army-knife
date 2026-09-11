@@ -1,0 +1,20 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
+
+import Data.Yaml
+import GHC.Generics
+
+data Config = Config
+  { host :: String
+  , port :: Int
+  } deriving (Show, Generic)
+
+instance FromJSON Config
+instance ToJSON Config
+
+main :: IO ()
+main = do
+  result <- decodeFileEither "config.yaml" :: IO (Either ParseException Config)
+  case result of
+    Left err  -> putStrLn (prettyPrintParseException err)
+    Right cfg -> print cfg
