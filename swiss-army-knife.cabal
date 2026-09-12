@@ -40,6 +40,7 @@ common deps
     , resolv                  >= 0.1.2   && < 0.3
     , split                   >= 0.2.5   && < 0.3
     , yaml
+    , text
   default-language: GHC2021
   ghc-options: -Wall
 

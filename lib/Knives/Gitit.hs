@@ -13,10 +13,21 @@ module Knives.Gitit where
 
 import System.Process
 import CommandLine
-import Config 
+import Config ( getKnifeConfig )
+import Data.Aeson (FromJSON, ToJSON)
+import GHC.Generics (Generic)
+
+data GititConfig = GititConfig
+  { remotes :: [String]
+  } deriving (Show, Generic)
+
+instance FromJSON GititConfig
+instance ToJSON GititConfig
+
+defaultGititConfig :: GititConfig
+defaultGititConfig = GititConfig { remotes = ["/repo"] }
 
 knifeGitit :: GititOptions -> IO ()
-knifeGitit opts = undefined
-  --cfg <- getConfig
-  --let iface = wireguardIface cfg
-  -- ... use iface, opts, etc.
+knifeGitit opts = do
+  cfg <- getKnifeConfig "gitit" defaultGititConfig
+  pure ()
