@@ -26,9 +26,7 @@ import System.IO.Unsafe (unsafePerformIO)
 
 -- | Application configuration, loaded from ~/.config/swiss-army-knife/config.yaml
 data Config = Config
-  { extIpService   :: String
-  , wireguardIface :: String
-  , zfsPools       :: [String]
+  { remotes   :: [String]
   } deriving (Show, Generic)
 
 instance FromJSON Config
@@ -36,9 +34,7 @@ instance ToJSON Config
 
 defaultConfig :: Config
 defaultConfig = Config
-  { extIpService   = "https://ifconfig.me"
-  , wireguardIface = "wg0"
-  , zfsPools       = ["zpool"]
+  { remotes   = ["/repo"]
   }
 
 appName :: String

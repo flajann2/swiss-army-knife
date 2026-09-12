@@ -3,6 +3,20 @@
 module CommandLine where
 
 import Options.Applicative
+    ( optional,
+      auto,
+      command,
+      help,
+      info,
+      long,
+      metavar,
+      option,
+      progDesc,
+      short,
+      strOption,
+      subparser,
+      switch,
+      Parser )
 
 -- Define data types for our commands and options
 data Command
@@ -14,6 +28,7 @@ data Command
   | WireGuard WireGuardOptions
   | NetMan    NetManOptions
   | SysNet    SysNetOptions
+  | Gitit     GititOptions
   deriving Show 
 
 data ExtIPOptions = ExtIPOptions
@@ -55,6 +70,14 @@ data SysNetOptions = SysNetOptions
   , deactivateSN :: Bool
   , disableSN    :: Bool
   , reactivateSN :: Bool
+  } deriving Show
+
+data GititOptions = GititOptions
+  { listRemote    :: Bool
+  , addRemote     :: Maybe String
+  , deleteRemote  :: Maybe String
+  , defaultRemote :: Maybe String
+  , createRepo    :: Maybe String
   } deriving Show
 
 data GlobalOptions = GlobalOptions

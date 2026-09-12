@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedRecordDot #-}
 
 {-|
 Module      : Gitit
@@ -12,10 +13,10 @@ module Knives.Gitit where
 
 import System.Process
 import CommandLine
-import Config (getConfig, Config(wireguardIface))
+import Config 
 
-knifeGitit :: GititOpts -> IO ()
-knifeGitit opts = do
-  cfg <- getConfig
-  let iface = wireguardIface cfg
+knifeGitit :: GititOptions -> IO ()
+knifeGitit opts = undefined
+  --cfg <- getConfig
+  --let iface = wireguardIface cfg
   -- ... use iface, opts, etc.

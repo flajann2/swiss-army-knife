@@ -47,6 +47,7 @@ library
   import: deps
   exposed-modules:
       CommandLine
+      Config
       Utils
       Knives
       Knives.Version
@@ -88,9 +89,9 @@ executable sak
     , swiss-army-knife
   default-language: GHC2021
 
-executable pg-yaml
+executable pg-config
   import: deps
-  main-is: Yaml.hs
+  main-is: TConfig.hs
   hs-source-dirs:
     playground
   ghc-options: -threaded -rtsopts -with-rtsopts=-N

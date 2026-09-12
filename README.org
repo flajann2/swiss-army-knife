@@ -12,6 +12,7 @@
     - [[#sak-wg][sak wg]]
     - [[#sak-nm][sak nm]]
     - [[#sak-sn][sak sn]]
+    - [[#sak-gitit][sak gitit]]
   - [[#examples][Examples]]
 
 ** Created By
@@ -82,6 +83,10 @@
 *** sak sn
     Manage systemd-networkd
     Now supports enabling and disabling of the underlying daemon.
+*** sak gitit
+    Creates a remote Git repositority for your current local one.
+    Configuration is via a yaml file.
+    Primarily for "remote" repos hosted on your local machine.
 
 ** Examples
    | Command   | Description                                                                                                        |

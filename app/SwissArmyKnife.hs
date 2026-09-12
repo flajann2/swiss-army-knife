@@ -3,20 +3,34 @@
 module Main where
 
 import Options.Applicative
-    ( (<**>), fullDesc, header, info, progDesc, execParser, helper )
+    ( (<**>)
+    , fullDesc
+    , header
+    , info
+    , progDesc
+    , execParser
+    , helper )
 import CommandLine
-    ( Command(SysNet, ExtIP, Kernel, Sleep, Version, ZfsCheck,
-              WireGuard, NetMan),
-      opts )
+    ( Command( SysNet
+             , ExtIP
+             , Kernel
+             , Sleep
+             , Version
+             , ZfsCheck
+             , WireGuard
+             , NetMan
+             , Gitit )
+    , opts )
 
-import Knives.ExtIP ( knifeExtIP )
-import Knives.Kernel ( knifeKernel )
-import Knives.NetMan ( knifeNetMan )
-import Knives.Sleep ( knifeSleep )
-import Knives.SysNet ( knifeSysNet )
-import Knives.Version ( knifeVersion )
+import Knives.ExtIP     ( knifeExtIP )
+import Knives.Kernel    ( knifeKernel )
+import Knives.NetMan    ( knifeNetMan )
+import Knives.Sleep     ( knifeSleep )
+import Knives.SysNet    ( knifeSysNet )
+import Knives.Version   ( knifeVersion )
 import Knives.WireGuard ( knifeWireGuard )
-import Knives.ZfsCheck ( knifeZfsCheck )
+import Knives.ZfsCheck  ( knifeZfsCheck )
+import Knives.Gitit     ( knifeGitit )
 
 main :: IO ()
 main = do
@@ -34,3 +48,4 @@ main = do
     WireGuard wgOpts    -> knifeWireGuard wgOpts
     NetMan nmOpts       -> knifeNetMan    nmOpts
     SysNet snOpts       -> knifeSysNet    snOpts
+    Gitit gititOpts     -> knifeGitit     gititOpts
