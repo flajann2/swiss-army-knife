@@ -8,6 +8,7 @@
 
 module Config
   ( getKnifeConfig
+  , setKnifeConfig
   , configDir
   , configFile
   ) where
@@ -105,3 +106,16 @@ getKnifeConfig key def = do
       let obj' = KM.insert (fromText key) (toJSON def) obj
       persistRawConfig (Object obj')
       pure def
+
+-- | Unconditionally write a knife's config section, overwriting
+-- whatever was there before. Use this for knife operations that
+-- explicitly mutate config (add/delete/set-default), as opposed to
+-- getKnifeConfig's "read, or seed with defaults on first use."
+setKnifeConfig :: ToJSON a => Text -> a -> IO ()
+setKnifeConfig key val = do
+  raw <- getRawConfig
+  let obj = case raw of
+        Object o -> o
+        _        -> KM.empty
+      obj' = KM.insert (fromText key) (toJSON val) obj
+  persistRawConfig (Object obj')
