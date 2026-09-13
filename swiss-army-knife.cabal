@@ -41,6 +41,7 @@ common deps
     , split                   >= 0.2.5   && < 0.3
     , yaml
     , text
+    , extra
   default-language: GHC2021
   ghc-options: -Wall
 

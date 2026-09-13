@@ -182,6 +182,27 @@ snOptionsParser = SysNetOptions
                  <> short 'r'
                  <> help "Reactivate (restart) systemd-networkd socket and service")
 
+gititOptionsParser :: Parser GititOptions
+gititOptionsParser = GititOptions
+  <$> switch   ( long "list"
+                 <> short 'l'
+                 <> help "List known remote repositories")
+  <*> optional (strOption ( long "add"
+                              <> short 'a'
+                              <> metavar "REMOTE"
+                              <> help "add a remote repo"))
+  <*> optional (strOption ( long "delete"
+                              <> short 'd'
+                              <> metavar "REMOTE"
+                              <> help "delete a remote repo"))
+  <*> optional (strOption ( long "default"
+                              <> short 'D'
+                              <> metavar "REMOTE"
+                              <> help "make repo the default"))
+  <*> optional (strOption ( long "create"
+                              <> short 'c'
+                              <> metavar "REMOTE"
+                              <> help "create a new repo in the remote repository"))
 
 -- Combine the subcommand parsers
 commandParser :: Parser Command
@@ -194,6 +215,7 @@ commandParser = subparser
     <> command "wg"       (info (WireGuard <$> wgOptionsParser)       (progDesc "Manage WireGuard VPNs"))
     <> command "nm"       (info (NetMan    <$> nmOptionsParser)       (progDesc "Manage NetworkManager"))
     <> command "sn"       (info (SysNet    <$> snOptionsParser)       (progDesc "Manage systemd-networkd"))
+    <> command "gitit"    (info (Gitit     <$> gititOptionsParser)    (progDesc "Create a repo in the remote repository and push the local git repo there"))
   )
 
 -- Combine global options with the command parser

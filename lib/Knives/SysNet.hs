@@ -9,7 +9,7 @@ knifeSysNet SysNetOptions { activateSN
                           , enableSN
                           , deactivateSN
                           , disableSN
-                          , reactivateSN}
+                          , reactivateSN }
   | isExclusiveOr [ activateSN
                   , enableSN
                   , deactivateSN
