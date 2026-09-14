@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedRecordDot #-}
 
 import Config ( getKnifeConfig )
 import Data.Aeson (FromJSON, ToJSON)
@@ -17,6 +18,7 @@ instance ToJSON PlaygroundConfig
 defaultPlaygroundConfig :: PlaygroundConfig
 defaultPlaygroundConfig = PlaygroundConfig { list = ["one", "two", "three"]
                                            , switchit = False
+                                           , name = Just "pg-config"
                                            }
 
 main :: IO ()
@@ -24,3 +26,7 @@ main = do
   cfg <- getKnifeConfig "playground" defaultPlaygroundConfig
   putStrLn $ show cfg
   pure ()
+
+-- >>> c <- getKnifeConfig "playground" defaultPlaygroundConfig
+-- >>> show $ list c
+-- "[\"one\",\"two\",\"three\"]"

@@ -61,6 +61,8 @@ library
       Knives.SysNet
       Knives.NetMan
       Knives.Gitit
+      Knives.Gitit.Yaml
+      Knives.Gitit.Target
   autogen-modules:
       Paths_swiss_army_knife
   other-modules:
