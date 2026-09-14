@@ -13,7 +13,7 @@ module Knives.Gitit where
 
 import Config ( getKnifeConfig, setKnifeConfig )
 import System.Process ()
-import CommandLine ( GititOptions(..) )
+import CommandLine ( GititCommand(..) )
 import Data.Aeson
     ( FromJSON(..)
     , ToJSON(..)
@@ -109,26 +109,20 @@ defaultGititConfig = GititConfig
   , defaultTarget = Nothing
   }
 
-knifeGitit :: GititOptions -> IO ()
-knifeGitit GititOptions { listRemote
-                        , addRemote
-                        , deleteRemote
-                        , defaultRemote
-                        , createRepo
-                        } = do
+-- | Dispatch on the gitit sub-command.
+knifeGitit :: GititCommand -> IO ()
+knifeGitit cmd = do
   cfg <- getKnifeConfig "gitit" defaultGititConfig
-  when     listRemote listRemoteG
-  whenJust addRemote addRemoteG
-  whenJust deleteRemote deleteRemoteG
-  whenJust defaultRemote defaultRemoteG
-  whenJust createRepo createRepoG
-  pure ()
-    where
-      listRemoteG = undefined
-      addRemoteG = undefined
-      deleteRemoteG = undefined
-      defaultRemoteG = undefined
-      createRepoG = undefined
+  case cmd of
+    GititList             -> listRemoteG cfg
+    GititAdd nameArg      -> addRemoteG cfg nameArg
+    GititDelete nameArg   -> deleteTarget cfg nameArg
+    GititDefault nameArg  -> setDefaultTarget cfg nameArg
+    GititCreate nameArg   -> createRepoG cfg nameArg
+  where
+    listRemoteG = undefined
+    addRemoteG  = undefined
+    createRepoG = undefined
 
 parseKind :: String -> Maybe TargetKind
 parseKind "local"     = Just Local

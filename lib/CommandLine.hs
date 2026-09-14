@@ -5,6 +5,7 @@ module CommandLine where
 import Options.Applicative
     ( optional,
       auto,
+      argument,
       command,
       help,
       info,
@@ -13,6 +14,7 @@ import Options.Applicative
       option,
       progDesc,
       short,
+      str,
       strOption,
       subparser,
       switch,
@@ -28,7 +30,7 @@ data Command
   | WireGuard WireGuardOptions
   | NetMan    NetManOptions
   | SysNet    SysNetOptions
-  | Gitit     GititOptions
+  | Gitit     GititCommand
   deriving Show 
 
 data ExtIPOptions = ExtIPOptions
@@ -72,13 +74,14 @@ data SysNetOptions = SysNetOptions
   , reactivateSN :: Bool
   } deriving Show
 
-data GititOptions = GititOptions
-  { listRemote    :: Bool
-  , addRemote     :: Maybe String
-  , deleteRemote  :: Maybe String
-  , defaultRemote :: Maybe String
-  , createRepo    :: Maybe String
-  } deriving Show
+-- gitit is now a sub-command group rather than a flag bag
+data GititCommand
+  = GititList
+  | GititAdd     String
+  | GititDelete  String
+  | GititDefault String
+  | GititCreate  String
+  deriving Show
 
 data GlobalOptions = GlobalOptions
   { verbose :: Bool } deriving Show
@@ -182,27 +185,36 @@ snOptionsParser = SysNetOptions
                  <> short 'r'
                  <> help "Reactivate (restart) systemd-networkd socket and service")
 
-gititOptionsParser :: Parser GititOptions
-gititOptionsParser = GititOptions
-  <$> switch   ( long "list"
-                 <> short 'l'
-                 <> help "List known remote repositories")
-  <*> optional (strOption ( long "add"
-                              <> short 'a'
-                              <> metavar "REMOTE"
-                              <> help "add a remote repo"))
-  <*> optional (strOption ( long "delete"
-                              <> short 'd'
-                              <> metavar "REMOTE"
-                              <> help "delete a remote repo"))
-  <*> optional (strOption ( long "default"
-                              <> short 'D'
-                              <> metavar "REMOTE"
-                              <> help "make repo the default"))
-  <*> optional (strOption ( long "create"
-                              <> short 'c'
-                              <> metavar "REMOTE"
-                              <> help "create a new repo in the remote repository"))
+-- Individual gitit sub-command parsers
+
+gititListParser :: Parser GititCommand
+gititListParser = pure GititList
+
+gititAddParser :: Parser GititCommand
+gititAddParser = GititAdd
+  <$> argument str (metavar "REMOTE" <> help "Remote repo to add")
+
+gititDeleteParser :: Parser GititCommand
+gititDeleteParser = GititDelete
+  <$> argument str (metavar "REMOTE" <> help "Remote repo to delete")
+
+gititDefaultParser :: Parser GititCommand
+gititDefaultParser = GititDefault
+  <$> argument str (metavar "REMOTE" <> help "Remote repo to make the default")
+
+gititCreateParser :: Parser GititCommand
+gititCreateParser = GititCreate
+  <$> argument str (metavar "REMOTE" <> help "Remote repo to create a new repository in")
+
+-- Combine gitit's sub-commands into one parser
+gititOptionsParser :: Parser GititCommand
+gititOptionsParser = subparser
+  (    command "list"    (info gititListParser    (progDesc "List known remote repositories"))
+    <> command "add"     (info gititAddParser     (progDesc "Add a remote repo"))
+    <> command "delete"  (info gititDeleteParser  (progDesc "Delete a remote repo"))
+    <> command "default" (info gititDefaultParser (progDesc "Make repo the default"))
+    <> command "create"  (info gititCreateParser  (progDesc "Create a new repo in the remote repository"))
+  )
 
 -- Combine the subcommand parsers
 commandParser :: Parser Command
@@ -215,7 +227,7 @@ commandParser = subparser
     <> command "wg"       (info (WireGuard <$> wgOptionsParser)       (progDesc "Manage WireGuard VPNs"))
     <> command "nm"       (info (NetMan    <$> nmOptionsParser)       (progDesc "Manage NetworkManager"))
     <> command "sn"       (info (SysNet    <$> snOptionsParser)       (progDesc "Manage systemd-networkd"))
-    <> command "gitit"    (info (Gitit     <$> gititOptionsParser)    (progDesc "Create a repo in the remote repository and push the local git repo there"))
+    <> command "gitit"    (info (Gitit     <$> gititOptionsParser)    (progDesc "Manage gitit remote repositories"))
   )
 
 -- Combine global options with the command parser
