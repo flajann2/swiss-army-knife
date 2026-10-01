@@ -2,6 +2,8 @@
 # Makefile for swiss-army-knife
 # =============================================================================
 # Usage examples:
+#   make build                 # Dynamic build
+#   make install               # Build and install sak to ~/.local/bin
 #   make sdist                 # Regenerate changelog + build source tarball
 #   make upload-candidate      # Upload as Hackage candidate
 #   make publish               # Publish release on Hackage
@@ -11,6 +13,7 @@
 # =============================================================================
 
 PKG_NAME   := swiss-army-knife
+EXE_NAME   := sak
 CABAL_FILE := $(PKG_NAME).cabal
 
 # Dynamically extract version from the .cabal file
@@ -25,12 +28,26 @@ HACKAGE_TARBALL     := /tmp/$(PKG_NAME)-$(VERSION).tar.gz
 # AUR destination directory (override with AUR_DEST=... if needed)
 AUR_DEST ?= /development/aur/swiss-army-knife
 
+# Local install location (override with PREFIX=... or INSTALL_DIR=...)
+PREFIX      ?= $(HOME)/.local
+INSTALL_DIR ?= $(PREFIX)/bin
+
+# Common flags for cabal install
+INSTALL_FLAGS := --installdir=$(INSTALL_DIR) \
+                 --install-method=copy \
+                 --overwrite-policy=always
+
 .PHONY: help changelog sdist upload-candidate publish clean version check \
         aur-prepare aur-update-pkgbuild aur-generate-srcinfo aur-publish \
-        build  build-static check-static
+        build build-static check-static install install-static uninstall
 
 help:
 	@echo "Available targets:"
+	@echo "  make build              - Verify dynamic build succeeds"
+	@echo "  make build-static       - Verify static build succeeds"
+	@echo "  make install            - Build and install $(EXE_NAME) to $(INSTALL_DIR)"
+	@echo "  make install-static     - Same, but statically linked"
+	@echo "  make uninstall          - Remove $(INSTALL_DIR)/$(EXE_NAME)"
 	@echo "  make sdist              - Regenerate CHANGELOG.md and build source tarball"
 	@echo "  make upload-candidate   - Upload as Hackage candidate (testing only)"
 	@echo "  make publish            - Publish release on Hackage"
@@ -39,7 +56,7 @@ help:
 	@echo "  make clean              - Clean build artifacts and generated files"
 	@echo "  make version            - Show detected package version"
 	@echo "  make check              - Run cabal check"
-	@echo "  make check-static       - Do a static check"
+	@echo "  make check-static       - Static build, then cabal check"
 
 # -----------------------------------------------------------------------------
 # Ensure a static build
@@ -49,10 +66,10 @@ build-static:
 	cabal build --enable-executable-static
 
 # -----------------------------------------------------------------------------
-# Ensure a dymanic build
+# Ensure a dynamic build
 # -----------------------------------------------------------------------------
 build:
-	@echo "→ Verifying dymanic build succeeds"
+	@echo "→ Verifying dynamic build succeeds"
 	cabal build
 
 check:
@@ -60,6 +77,25 @@ check:
 
 check-static: build-static
 	cabal check
+
+# -----------------------------------------------------------------------------
+# Local install of the executable
+# -----------------------------------------------------------------------------
+install:
+	@echo "→ Installing $(PKG_NAME)-$(VERSION) to $(INSTALL_DIR)"
+	@mkdir -p $(INSTALL_DIR)
+	cabal install exe:$(EXE_NAME) $(INSTALL_FLAGS)
+	@echo "✅ Installed $(INSTALL_DIR)/$(EXE_NAME)"
+
+install-static:
+	@echo "→ Installing static $(PKG_NAME)-$(VERSION) to $(INSTALL_DIR)"
+	@mkdir -p $(INSTALL_DIR)
+	cabal install exe:$(EXE_NAME) --enable-executable-static $(INSTALL_FLAGS)
+	@echo "✅ Installed $(INSTALL_DIR)/$(EXE_NAME) (static)"
+
+uninstall:
+	@echo "→ Removing $(INSTALL_DIR)/$(EXE_NAME)"
+	rm -f $(INSTALL_DIR)/$(EXE_NAME)
 
 # -----------------------------------------------------------------------------
 # Convert OrgMode changelog to GitHub-flavored Markdown (what Hackage prefers)
@@ -118,13 +154,12 @@ aur-update-pkgbuild: sdist
 	@wget -q -O $(HACKAGE_TARBALL) $(HACKAGE_TARBALL_URL) || \
 		(echo "ERROR: Failed to download from Hackage. Is the version published?"; exit 1)
 
-	@# Compute sha256 from the *official* Hackage tarball (not the local one)
+	@# Compute sha256 from the *official* Hackage tarball, update PKGBUILD,
+	@# and warn if it differs from the locally built tarball.
 	@SHA=$$(sha256sum $(HACKAGE_TARBALL) | cut -d' ' -f1); \
-	sed -i "s/^sha256sums=.*/sha256sums=('$$SHA')/" PKGBUILD
-	@echo "→ PKGBUILD updated with official Hackage hash for version $(VERSION)"
-
-	@# Optional: warn if local and Hackage tarballs differ
-	@LOCAL_SHA=$$(sha256sum $(TARBALL) | cut -d' ' -f1); \
+	sed -i "s/^sha256sums=.*/sha256sums=('$$SHA')/" PKGBUILD; \
+	echo "→ PKGBUILD updated with official Hackage hash for version $(VERSION)"; \
+	LOCAL_SHA=$$(sha256sum $(TARBALL) | cut -d' ' -f1); \
 	if [ "$$LOCAL_SHA" != "$$SHA" ]; then \
 		echo "⚠️  WARNING: Local tarball hash differs from Hackage hash!"; \
 		echo "   This can happen if you uploaded a different tarball than the one just built."; \
@@ -137,7 +172,7 @@ aur-generate-srcinfo:
 	@makepkg --printsrcinfo > .SRCINFO
 
 # Full AUR preparation: build tarball, update PKGBUILD, regenerate .SRCINFO,
-# and automatically copy files to ~/aur/swiss-army-knife
+# and copy the files to $(AUR_DEST)
 aur-prepare: aur-update-pkgbuild aur-generate-srcinfo
 	@echo "→ Copying updated files to $(AUR_DEST)"
 	@mkdir -p $(AUR_DEST)
@@ -148,8 +183,7 @@ aur-prepare: aur-update-pkgbuild aur-generate-srcinfo
 	@echo "   You can now review and push them."
 
 # -----------------------------------------------------------------------------
-# aur-publish: Prepare everything, commit with intelligent message,
-# ask for confirmation, then push to AUR.
+# aur-publish: Prepare everything, commit, ask for confirmation, then push.
 # -----------------------------------------------------------------------------
 aur-publish: aur-prepare
 	@echo ""
