@@ -92,6 +92,8 @@ executable sak
     , optparse-applicative    >= 0.18    && < 0.20
     , swiss-army-knife
   default-language: GHC2021
+  if flag(static)
+    ld-options: -static
 
 executable pg-config
   import: deps
@@ -104,6 +106,8 @@ executable pg-config
     , optparse-applicative    >= 0.18    && < 0.20
     , swiss-army-knife
   default-language: GHC2021
+  if flag(static)
+    ld-options: -static
 
 test-suite swiss-army-knife-test
   type: exitcode-stdio-1.0

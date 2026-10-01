@@ -115,8 +115,7 @@ pathKind p = do
             | isDir     -> IsDir
             | otherwise -> Missing
             
--- | create a repo in the specified target
-
+-- | "sak gitit create REMOTENAME REPONAME" - create a repo in the specified target
 createRepo :: GititConfig -> String -> String -> IO ()
 createRepo cfg t r = do
   result <- createRepo' cfg t r
