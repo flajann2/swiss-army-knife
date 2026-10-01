@@ -40,16 +40,12 @@ import Data.List (unlines)
 knifeGitit :: GititCommand -> IO ()
 knifeGitit cmd = do
   cfg <- getKnifeConfig "gitit" defaultGititConfig
-  case cmd of
-    GititList             -> listRemoteG cfg
-    GititAdd nameArg      -> addRemoteG cfg nameArg
-    GititDelete nameArg   -> deleteTarget cfg nameArg
-    GititDefault nameArg  -> setDefaultTarget cfg nameArg
-    GititCreate nameArg   -> createRepoG cfg nameArg
-  where
-    listRemoteG cfg   = putStrLn $ unlines [t.name <> " - " <> show t.kind | t <- cfg.targets]
-    addRemoteG  cfg a = undefined
-    createRepoG cfg a = undefined
-
+  path <- case cmd of
+    GititList                       -> listTarget cfg
+    GititAdd target remote location -> addTarget cfg target remote location
+    GititDelete name                -> deleteTarget cfg name
+    GititDefault name               -> setDefaultTarget cfg name
+    GititCreate kind name           -> createRepo cfg kind name
+  pure ()
 -- >>> getKnifeConfig "gitit" defaultGititConfig 
--- GititConfig {targets = [Target {name = "github", kind = GitHub, path = Just "https://github.com", url = Nothing},Target {name = "origin", kind = Local, path = Just "/repo", url = Nothing}], defaultTarget = Nothing}
+-- GititConfig {targets = [Target {name = "github", kind = GitHub, path = "https://github.com"},Target {name = "origin", kind = Local, path = "/repo"}], defaultTarget = Nothing}

@@ -13,6 +13,10 @@
     - [[#sak-nm][sak nm]]
     - [[#sak-sn][sak sn]]
     - [[#sak-gitit][sak gitit]]
+      - [[#local][Local]]
+      - [[#github][Github]]
+      - [[#gitlab][Gitlab]]
+      - [[#bitbucket][Bitbucket]]
   - [[#examples][Examples]]
 
 ** Created By
@@ -87,14 +91,26 @@
     Creates a remote Git repositority for your current local one.
     Configuration is via a yaml file.
     Primarily for "remote" repos hosted on your local machine.
+**** Local
+      This is for your filesystem-hosted repo, which
+      you may have backed by a cloud filesysten, such as pCloud.
+**** Github
+      You must have gh installed and configured with your ssh credentials.
+**** Gitlab
+      You must have glab installed and configured with your ssh credentials.
+**** Bitbucket
+      Bitbucket support will be added at a later date.
+      If you would like to see this, contact us.
 
 ** Examples
-   | Command   | Description                                                                                                        |
-   |-----------+--------------------------------------------------------------------------------------------------------------------|
-   | sak extip | Will list your external IP and location information                                                                |
-   | sak wg -l | (If you are using wg_quick) will list all of your available WG vpns, as well as their active and enabled statuses. |
-   | sak wg -d | Will deactivate (but not disable) all WireGuard VPNs.                                                            |
-   | sak wg -D | Will disable (but not deactivate) all WireGuard VPNs.                                                              |
-   | sak sn -A | Will enable and start systemd-networkd.                                                                            |
-   | sak nm -D | Will disable and stop NetworkManager.                                                                              |
-   |-----------+--------------------------------------------------------------------------------------------------------------------|
+   | Command                   | Description                                                                                                        |
+   |---------------------------+--------------------------------------------------------------------------------------------------------------------|
+   | sak extip                 | Will list your external IP and location information                                                                |
+   | sak wg -l                 | (If you are using wg_quick) will list all of your available WG vpns, as well as their active and enabled statuses. |
+   | sak wg -d                 | Will deactivate (but not disable) all WireGuard VPNs.                                                              |
+   | sak wg -D                 | Will disable (but not deactivate) all WireGuard VPNs.                                                              |
+   | sak sn -A                 | Will enable and start systemd-networkd.                                                                            |
+   | sak nm -D                 | Will disable and stop NetworkManager.                                                                              |
+   | sak gitit add xxx yyy zzz | TBD                                                                                                                |
+   |                           |                                                                                                                    |
+   |---------------------------+--------------------------------------------------------------------------------------------------------------------|

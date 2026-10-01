@@ -61,25 +61,22 @@ instance ToJSON TargetKind where
 -- Git's own "origin"/"upstream" convention), what kind of host it
 -- is, and either a local path or a remote URL.
 data Target = Target
-  { name :: String
-  , kind :: TargetKind
-  , path :: Maybe String   -- ^ used when kind == Local
-  , url  :: Maybe String   -- ^ used when kind is a forge
+  { name :: String     -- ^ this should be remote, as in name of the remote
+  , kind :: TargetKind -- ^ name of the target, local, github, etc.
+  , path :: String     -- ^ if kind is Local, this is a directory path. kind is anything else, this is a URL
   } deriving (Show, Generic)
 
 instance FromJSON Target where
   parseJSON = withObject "Target" $ \v -> Target
     <$> v .:  "name"
     <*> v .:  "kind"
-    <*> v .:? "path"
-    <*> v .:? "url"
+    <*> v .: "path"
 
 instance ToJSON Target where
   toJSON t = object
     [ "name" .= name t
     , "kind" .= kind t
     , "path" .= path t
-    , "url"  .= url t
     ]
 
 data GititConfig = GititConfig
@@ -103,8 +100,7 @@ defaultGititConfig :: GititConfig
 defaultGititConfig = GititConfig
   { targets = [ Target { name = "origin"
                         , kind = Local
-                        , path = Just "/repo"
-                        , url  = Nothing
+                        , path = "/repo"
                         }
               ]
   , defaultTarget = Nothing

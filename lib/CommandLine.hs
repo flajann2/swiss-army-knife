@@ -19,6 +19,7 @@ import Options.Applicative
       subparser,
       switch,
       Parser )
+import Data.Maybe (fromMaybe)
 
 -- Define data types for our commands and options
 data Command
@@ -74,13 +75,13 @@ data SysNetOptions = SysNetOptions
   , reactivateSN :: Bool
   } deriving Show
 
--- gitit is now a sub-command group rather than a flag bag
+-- | gitit is now a sub-command group
 data GititCommand
   = GititList
-  | GititAdd     String
+  | GititAdd     String String String
   | GititDelete  String
   | GititDefault String
-  | GititCreate  String
+  | GititCreate  String String -- ^ KIND REPONAME
   deriving Show
 
 data GlobalOptions = GlobalOptions
@@ -191,8 +192,13 @@ gititListParser :: Parser GititCommand
 gititListParser = pure GititList
 
 gititAddParser :: Parser GititCommand
-gititAddParser = GititAdd
-  <$> argument str (metavar "REMOTE" <> help "Remote repo to add")
+gititAddParser = mkGititAdd
+  <$> argument str (metavar "KIND"     <> help "Kind of target")
+  <*> argument str (metavar "REMOTE"   <> help "Remote repo, normally the same as KIND")
+  <*> argument str (metavar "LOCATION" <> help "Location path, depending on KIND")
+  where
+    mkGititAdd :: String -> String -> String -> GititCommand
+    mkGititAdd targetKind mRemote mLocation = GititAdd targetKind mRemote mLocation
 
 gititDeleteParser :: Parser GititCommand
 gititDeleteParser = GititDelete
@@ -204,7 +210,8 @@ gititDefaultParser = GititDefault
 
 gititCreateParser :: Parser GititCommand
 gititCreateParser = GititCreate
-  <$> argument str (metavar "REMOTE" <> help "Remote repo to create a new repository in")
+  <$> argument str (metavar "KIND"       <> help "Target to create a new repository in")
+  <*> argument str (metavar "REPONAME"   <> help "Name of the new repo")
 
 -- Combine gitit's sub-commands into one parser
 gititOptionsParser :: Parser GititCommand

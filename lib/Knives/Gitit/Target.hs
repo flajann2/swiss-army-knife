@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE MultiWayIf #-}
 
 {-|
 Module      : Knives.Gitit.Target
@@ -11,6 +12,14 @@ The data amd Yaml support.
 
 module Knives.Gitit.Target where
 
+import System.Process (CreateProcess(..), proc, readCreateProcessWithExitCode)
+import System.Exit (ExitCode(..))
+import System.Directory (doesPathExist
+                        , doesFileExist
+                        , doesDirectoryExist
+                        , createDirectory
+                        , createDirectoryIfMissing)
+import Data.List (find)
 import Config ( getKnifeConfig, setKnifeConfig )
 import System.Process ()
 import CommandLine ( GititCommand(..) )
@@ -40,24 +49,22 @@ parseKind "gitlab"    = Just GitLab
 parseKind "bitbucket" = Just Bitbucket
 parseKind _           = Nothing
 
--- | "sak gitit add NAME KIND LOCATION" — register a new target.
+-- | "sak gitit add KIND REMOTE LOCATION" — register a new target.
 -- Rejects a duplicate name and an unrecognized kind rather than
 -- silently overwriting or storing garbage.
 addTarget :: GititConfig -> String -> String -> String -> IO ()
-addTarget cfg nameArg kindStr location = case parseKind kindStr of
-  Nothing -> hPutStrLn stderr ("Unknown kind: " <> kindStr)
+addTarget cfg kind remote location = case parseKind kind of
+  Nothing -> hPutStrLn stderr ("Unknown kind: " <> kind)
   Just k
-    | any ((== nameArg) . name) (targets cfg) ->
-        hPutStrLn stderr ("A target named " <> nameArg <> " already exists")
+    | any ((== remote) . name) (targets cfg) ->
+        hPutStrLn stderr ("A target named " <> remote <> " already exists")
     | otherwise -> do
-        let newTarget = case k of
-              Local -> Target { name = nameArg, kind = k
-                               , path = Just location, url = Nothing }
-              _     -> Target { name = nameArg, kind = k
-                               , path = Nothing, url = Just location }
+        let newTarget = Target { name = remote
+                               , kind = k
+                               , path = location }
             cfg' = cfg { targets = targets cfg <> [newTarget] }
         setKnifeConfig "gitit" cfg'
-        putStrLn ("Added target " <> nameArg)
+        putStrLn ("Added target " <> remote)
 
 -- | "sak gitit delete NAME" — remove a target by name. Also clears
 -- defaultTarget if it pointed at the one being deleted, so the
@@ -86,3 +93,80 @@ setDefaultTarget cfg nameArg
       let cfg' = cfg { defaultTarget = Just nameArg }
       setKnifeConfig "gitit" cfg'
       putStrLn ("Default target set to " <> nameArg)
+
+
+-- | "sak gitit list" -- list all targets
+listTarget :: GititConfig -> IO ()
+listTarget cfg = putStrLn $ unlines [t.name <> " - " <> show t.kind | t <- cfg.targets]
+
+
+-- | Look up a target by its name.
+findTarget :: GititConfig -> String -> Maybe Target
+findTarget cfg n = find (\t -> t.name == n) cfg.targets
+
+data PathKind = IsFile | IsDir | Missing
+  deriving (Show, Eq)
+
+pathKind :: FilePath -> IO PathKind
+pathKind p = do
+  isFile <- doesFileExist p
+  isDir  <- doesDirectoryExist p
+  pure $ if | isFile    -> IsFile
+            | isDir     -> IsDir
+            | otherwise -> Missing
+            
+-- | create a repo in the specified target
+
+createRepo :: GititConfig -> String -> String -> IO ()
+createRepo cfg t r = do
+  result <- createRepo' cfg t r
+  case result of
+    Just r  -> do
+      putStrLn   ""
+      putStrLn $ "  Creation of " <> r <> " worked."
+      putStrLn $ "  To add this remote to your local repo, execute:"
+      putStrLn $ "     git remote add origin " <> r
+      putStrLn   "  you can replace 'origin' with another target name"
+    Nothing -> putStrLn "failed"
+      
+
+createRepo' :: GititConfig -> String -> String -> IO (Maybe String)
+createRepo' cfg targetName repoName =
+  case findTarget cfg targetName of
+    Nothing -> Nothing <$ hPutStrLn stderr ("No target named " <> targetName)
+    Just t  -> case t.kind of
+      Local     -> createLocal     t repoName
+      GitHub    -> createGitHub    t repoName
+      GitLab    -> createGitLab    t repoName
+      Bitbucket -> createBitbucket t repoName
+    where
+      createLocal
+        , createGitHub
+        , createGitLab
+        , createBitbucket :: Target -> String -> IO (Maybe String)
+      createLocal t n = do
+        let repo = t.path <> "/" <> n <> ".git"
+        pk <- pathKind repo
+        case pk of
+          Missing -> initRepo repo
+          IsFile  -> Nothing <$ hPutStrLn stderr (repo <> " already exists and is a file.")
+          IsDir   -> Nothing <$ hPutStrLn stderr (repo <> " already exists.")
+        
+      initRepo repo = do
+        putStrLn $ "Creating new repo " <> repo
+        createDirectory repo
+        (code
+          , _out
+          , err) <- readCreateProcessWithExitCode ((proc "git" ["init", "--bare"]) { cwd = Just repo }) ""
+        case code of
+          ExitSuccess   -> do
+            putStrLn $ "Initialized bare repo at " <> repo
+            return $ Just repo
+          ExitFailure n -> do
+            hPutStrLn stderr $ "git init failed (" <> show n <> "): " <> err
+            return Nothing
+    
+      createGitHub    = undefined
+      createGitLab    = undefined
+      createBitbucket = undefined
+      
