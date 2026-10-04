@@ -12,29 +12,13 @@ move push it there.
 
 module Knives.Gitit where
 
-import Config ( getKnifeConfig, setKnifeConfig )
+import Config ( getKnifeConfig )
 import System.Process ()
 import CommandLine ( GititCommand(..) )
-import Data.Aeson
-    ( FromJSON(..)
-    , ToJSON(..)
-    , withObject
-    , withText
-    , object
-    , (.:)
-    , (.:?)
-    , (.!=)
-    , (.=)
-    )
 import Knives.Gitit.Yaml
 import Knives.Gitit.Target
-import Data.Text (Text)
-import GHC.Generics (Generic)
-import Control.Monad (when)
+import Knives.Gitit.Repo
 import Utils ()
-import Control.Monad.Extra (whenJust)
-import System.IO (hPutStrLn, stderr)
-import Data.List (unlines)
 
 -- | Dispatch on the gitit sub-command.
 knifeGitit :: GititCommand -> IO ()

@@ -63,6 +63,7 @@ library
       Knives.Gitit
       Knives.Gitit.Yaml
       Knives.Gitit.Target
+      Knives.Gitit.Repo
   autogen-modules:
       Paths_swiss_army_knife
   other-modules:

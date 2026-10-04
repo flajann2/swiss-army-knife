@@ -11,9 +11,7 @@ The data amd Yaml support.
 
 module Knives.Gitit.Yaml where
 
-import Config ( getKnifeConfig, setKnifeConfig )
 import System.Process ()
-import CommandLine ( GititCommand(..) )
 import Data.Aeson
     ( FromJSON(..)
     , ToJSON(..)
@@ -25,12 +23,8 @@ import Data.Aeson
     , (.!=)
     , (.=)
     )
-import Data.Text (Text)
 import GHC.Generics (Generic)
-import Control.Monad (when)
 import Utils ()
-import Control.Monad.Extra (whenJust)
-import System.IO (hPutStrLn, stderr)
 
 
 -- | What kind of Git host a target points to. Determines how
