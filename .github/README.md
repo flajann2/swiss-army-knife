@@ -1,0 +1,153 @@
+# swiss-army-knife <span class="tag" data-tag-name="TOC_7_gh"><span class="smallcaps">TOC_7_gh</span></span>
+
+- [Created By](#created-by)
+- [Introduction](#introduction)
+- [Installation](#installation)
+  - [Statiic Builds from Hackage](#statiic-builds-from-hackage)
+- [Documentation](#documentation)
+  - [sak –help](#sak---help)
+  - [sak extip](#sak-extip)
+  - [sak kernel](#sak-kernel)
+  - [sak sleep](#sak-sleep)
+  - [sak zfscheck](#sak-zfscheck)
+  - [sak wg](#sak-wg)
+  - [sak nm](#sak-nm)
+  - [sak sn](#sak-sn)
+  - [sak gitit](#sak-gitit)
+    - [Local](#local)
+    - [Github](#github)
+    - [Gitlab](#gitlab)
+    - [Bitbucket](#bitbucket)
+- [Examples](#examples)
+
+## Created By
+
+Fred Mitchell & Atomlogik
+
+## Introduction
+
+Swiss-Army-Knife is a collection of useful tools that you can do
+quickly.
+
+This is now in Hackage and the AUR. So in theory, it can run "anywhere",
+though I have not had the time to test this, so I am open to comments
+and pull requests. In particular, it is gauranteed to run on Arch, and I
+do have some support for other distros, and that will grow. But I have
+not had the time to fully test other distros.
+
+So some knives will run "anywhere", but some that call out to the system
+for system-specific information may have issues. As I find out about
+them, I will fix them as quickly as I can.
+
+## Installation
+
+- using cabal (recommended) cabal update cabal install swiss-army-knife
+
+- On Arch from the AUR
+
+  |            |                          |
+  |------------|--------------------------|
+  | using aura | aura -A swiss-army-knife |
+  | using yay  | yay -S swiss-army-knife  |
+  | using paru | paru -S swiss-army-knife |
+
+### Statiic Builds from Hackage
+
+To build a statically-linked binary, install:
+
+- \`ghc-static\` (Arch: \`pacman -S ghc-static\`)
+- a static gmp (Arch: AUR \`libgmp-static\`)
+- a static zlib — Arch's official package dropped \`libz.a\` as of
+  1.3.2; build it yourself from <https://zlib.net> if needed.
+
+Then: \`cabal install swiss-army-knife -fstatic\`
+
+## Documentation
+
+These are the current "knives" implemented. More to come. Open to
+suggestions.
+
+- Note that you no longer have to prepend "sudo" to do system-level
+  operations.
+
+### sak –help
+
+Will list all the current commands.
+
+### sak extip
+
+Will tell you what your external IP is for your connection, either in
+IPv4 or IPv6 Useful if you use a VPN
+
+### sak kernel
+
+Will tell you the version of the installed kernel as well as the running
+version. Support is in for Arch, Debian, and RedHat, but only Arch has
+been tested.
+
+### sak sleep
+
+Will put your system in standby mode.
+
+### sak zfscheck
+
+If you use the zfs from archzfs, sometimes it does not keep up with the
+latest kernel release. Check to see the latest kernel zfs supports
+before you do a system upgrade. Other distros will probably not have the
+zfs sync issues that Arch does.
+
+### sak wg
+
+If you use WireGuard for your VPN, manage it from here. List your
+installed WireGuard options, and swap among them. you can start, stop,
+and list your WireGuard VPNs.
+
+Now supports enabling and disabling of the underlying daemon.
+
+### sak nm
+
+Manage NetworkManager Now supports enabling and disabling of the
+underlying daemon.
+
+### sak sn
+
+Manage systemd-networkd Now supports enabling and disabling of the
+underlying daemon.
+
+### sak gitit
+
+Creates a remote Git repositority for your current local one.
+Configuration is via a yaml file. Primarily for "remote" repos hosted on
+your local machine.
+
+1.  Local
+
+    This is for your filesystem-hosted repo, which you may have backed
+    by a cloud filesysten, such as pCloud.
+
+2.  Github
+
+    You must have gh installed and configured with your ssh credentials.
+
+3.  Gitlab
+
+    You must have glab installed and configured with your ssh
+    credentials.
+
+4.  Bitbucket
+
+    Bitbucket support will be added at a later date. If you would like
+    to see this, contact us.
+
+## Examples
+
+| Command | Description |
+|----|----|
+| sak extip | Will list your external IP and location information |
+| sak wg -l | (If you are using wg<sub>quick</sub>) will list all of your available WG vpns, as well as their active and enabled statuses. |
+| sak wg -d | Will deactivate (but not disable) all WireGuard VPNs. |
+| sak wg -D | Will disable (but not deactivate) all WireGuard VPNs. |
+| sak sn -A | Will enable and start systemd-networkd. |
+| sak nm -D | Will disable and stop NetworkManager. |
+| sak gitit create origin myrepo | Will create a new remote repo named "myrepo" in the origin target. |
+|  |  |

@@ -12,6 +12,8 @@ The data amd Yaml support.
 
 module Knives.Gitit.Target where
 
+import Network.HTTP.Simple
+import qualified Data.ByteString.Char8 as B
 import System.Process (CreateProcess(..), proc, readCreateProcessWithExitCode)
 import System.Exit (ExitCode(..))
 import System.Directory (doesPathExist
@@ -29,6 +31,7 @@ import Data.Aeson
     , withObject
     , withText
     , object
+    , Value
     , (.:)
     , (.:?)
     , (.!=)
@@ -166,6 +169,17 @@ createRepo' cfg targetName repoName =
             return Nothing
     
       createGitHub    = undefined
+      createGithub' :: B.ByteString -> String -> Bool -> IO Value
+      createGithub' token name priv = do
+        let req = setRequestMethod "POST"
+                  $ setRequestHeader "Authorization" ["Bearer " <> token]
+                  $ setRequestHeader "Accept" ["application/vnd.github+json"]
+                  $ setRequestHeader "X-GitHub-Api-Version" ["2022-11-28"]
+                  $ setRequestHeader "User-Agent" ["swiss-army-knife-gitit"]  -- GitHub rejects requests without one
+                  $ setRequestBodyJSON (object ["name" .= name, "private" .= priv])
+                  $ "https://api.github.com/user/repos"
+        getResponseBody <$> httpJSON req
+
       createGitLab    = undefined
       createBitbucket = undefined
       
