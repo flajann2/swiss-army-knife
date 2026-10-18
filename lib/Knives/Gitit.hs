@@ -24,12 +24,13 @@ import Utils ()
 knifeGitit :: GititCommand -> IO ()
 knifeGitit cmd = do
   cfg <- getKnifeConfig "gitit" defaultGititConfig
-  path <- case cmd of
+  _ <- case cmd of
     GititList                       -> listTarget cfg
     GititAdd target remote location -> addTarget cfg target remote location
     GititDelete name                -> deleteTarget cfg name
     GititDefault name               -> setDefaultTarget cfg name
     GititCreate kind name           -> createRepo cfg kind name
   pure ()
+
 -- >>> getKnifeConfig "gitit" defaultGititConfig 
--- GititConfig {targets = [Target {name = "github", kind = GitHub, path = "https://github.com"},Target {name = "origin", kind = Local, path = "/repo"}], defaultTarget = Nothing}
+-- GititConfig {targets = [Target {name = "origin", kind = Local, path = "/repo"},Target {name = "github", kind = GitHub, path = "git@github.com:flajann2"},Target {name = "gitlab", kind = GitLab, path = "git@gitlab.com:eltoro-maestro"},Target {name = "bitbucket", kind = Bitbucket, path = "git@bitbucket.org:eltoro-maestro"}], defaultTarget = Nothing}

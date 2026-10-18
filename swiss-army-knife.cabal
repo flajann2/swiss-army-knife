@@ -1,6 +1,6 @@
 cabal-version: 2.4
 name:           swiss-army-knife
-version:        1.1.1.0
+version:        1.2.0.0
 synopsis:       A collection of small tools to make life a bit easier for the command-line.
 category:       System
 description:    Please see the README on GitHub at <https://github.com/flajann2/swiss-army-knife#readme>
@@ -39,9 +39,9 @@ common deps
     , process                 >= 1.6.18  && < 1.7
     , resolv                  >= 0.1.2   && < 0.3
     , split                   >= 0.2.5   && < 0.3
-    , yaml
-    , text
-    , extra
+    , yaml                    >= 0.11    && < 0.12
+    , text                    >= 2.0     && < 2.2
+    , extra                   >= 1.7     && < 1.9
   default-language: GHC2021
   ghc-options: -Wall
 

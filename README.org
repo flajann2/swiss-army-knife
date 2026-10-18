@@ -73,6 +73,14 @@
     Check to see the latest kernel zfs supports before
     you do a system upgrade. Other distros will probably
     not have the zfs sync issues that Arch does.
+
+    zfscheck will print the version information, and give
+    its recommendation of whether it is safe to upgrade the
+    kernel or not.
+
+    zfscheck gives you the option over needing to use an lts version
+    of the kernel. You can simply pin your kernel and enjoy the
+    otherwise benefits of rolling releases.
 *** sak wg
     If you use WireGuard for your VPN, manage it from
     here. List your installed WireGuard options,
