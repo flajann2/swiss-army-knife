@@ -1,3 +1,14 @@
+# Unreleased
+
+- `sak gitit create` takes `-r` / `--add-remote` to add the newly created repo as a remote of the current local repo (named after the target), or `-n NAME` / `--remote-name NAME` to choose the remote name. Works in git and jj repos; checks run before the remote repo is created.
+- Local targets now report an absolute path, so it works as a remote URL.
+- gitit API errors (GitHub, GitLab, Bitbucket) are reported as one line with the HTTP status and the forge's message, instead of crashing on an empty or non-JSON response body.
+- Bitbucket: optional `BITBUCKET_PROJECT` selects the project new repos are created in.
+- README: full gitit documentation, including token setup for each forge.
+- README: expanded documentation for every knife (flags, output, what each one does under the hood), and a note on sudo.
+- `make readme` regenerates `.github/README.md` (what GitHub displays) from README.org; `make sdist` now runs it too.
+- AUR package: no longer fully static. A static glibc binary segfaulted in `sak extip` (DNS via NSS) after glibc updates. Haskell libraries are still linked statically, so ghc-libs updates can't break it.
+
 # 1.1.0.5 - 2026-07-11
 
 - Made build static to get around dynamic mixmatch issues with GHC versions.

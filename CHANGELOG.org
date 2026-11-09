@@ -17,6 +17,9 @@
     one does under the hood), and a note on sudo.
   + =make readme= regenerates =.github/README.md= (what GitHub displays) from
     README.org; =make sdist= now runs it too.
+  + AUR package: no longer fully static. A static glibc binary
+    segfaulted in =sak extip= (DNS via NSS) after glibc updates. Haskell
+    libraries are still linked statically, so ghc-libs updates can't break it.
 * 1.1.0.5 - 2026-07-11
   + Made build static to get around dynamic mixmatch issues with GHC versions.
   + Static made optional for Hackage installs. 
