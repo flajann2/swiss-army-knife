@@ -81,7 +81,9 @@ data GititCommand
   | GititAdd     String String String
   | GititDelete  String
   | GititDefault String
-  | GititCreate  String String -- ^ KIND REPONAME
+  | GititCreate  String String (Maybe String)
+    -- ^ TARGET REPONAME, and the local remote name to register the
+    --   new repo under (Nothing = don't touch the local repo)
   deriving Show
 
 data GlobalOptions = GlobalOptions
@@ -209,9 +211,24 @@ gititDefaultParser = GititDefault
   <$> argument str (metavar "REMOTE" <> help "Remote repo to make the default")
 
 gititCreateParser :: Parser GititCommand
-gititCreateParser = GititCreate
+gititCreateParser = mkGititCreate
   <$> argument str (metavar "KIND"       <> help "Target to create a new repository in")
   <*> argument str (metavar "REPONAME"   <> help "Name of the new repo")
+  <*> switch ( long "add-remote"
+               <> short 'r'
+               <> help "Add the new repo as a remote of the current local repo, named after the target" )
+  <*> optional (strOption ( long "remote-name"
+                            <> short 'n'
+                            <> metavar "NAME"
+                            <> help "Add the new repo as a remote under NAME instead (implies --add-remote)" ))
+  where
+    mkGititCreate :: String -> String -> Bool -> Maybe String -> GititCommand
+    mkGititCreate target repo addRemote mName = GititCreate target repo $
+      case mName of
+        Just n            -> Just n
+        Nothing
+          | addRemote     -> Just target
+          | otherwise     -> Nothing
 
 -- Combine gitit's sub-commands into one parser
 gititOptionsParser :: Parser GititCommand

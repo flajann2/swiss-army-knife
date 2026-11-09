@@ -29,7 +29,7 @@ knifeGitit cmd = do
     GititAdd target remote location -> addTarget cfg target remote location
     GititDelete name                -> deleteTarget cfg name
     GititDefault name               -> setDefaultTarget cfg name
-    GititCreate kind name           -> createRepo cfg kind name
+    GititCreate kind name remote    -> createRepo cfg kind name remote
   pure ()
 
 -- >>> getKnifeConfig "gitit" defaultGititConfig 
