@@ -37,7 +37,7 @@ INSTALL_FLAGS := --installdir=$(INSTALL_DIR) \
                  --install-method=copy \
                  --overwrite-policy=always
 
-.PHONY: help changelog sdist upload-candidate publish clean version check \
+.PHONY: help changelog readme sdist upload-candidate publish clean version check \
         aur-prepare aur-update-pkgbuild aur-generate-srcinfo aur-publish \
         build build-static check-static install install-static uninstall
 
@@ -48,7 +48,8 @@ help:
 	@echo "  make install            - Build and install $(EXE_NAME) to $(INSTALL_DIR)"
 	@echo "  make install-static     - Same, but statically linked"
 	@echo "  make uninstall          - Remove $(INSTALL_DIR)/$(EXE_NAME)"
-	@echo "  make sdist              - Regenerate CHANGELOG.md and build source tarball"
+	@echo "  make readme             - Regenerate .github/README.md from README.org"
+	@echo "  make sdist              - Regenerate CHANGELOG.md and README, build source tarball"
 	@echo "  make upload-candidate   - Upload as Hackage candidate (testing only)"
 	@echo "  make publish            - Publish release on Hackage"
 	@echo "  make aur-prepare        - Full prep: sdist + update PKGBUILD (official Hackage hash) + copy to AUR"
@@ -105,9 +106,18 @@ changelog:
 	pandoc CHANGELOG.org -o CHANGELOG.md -f org -t gfm --wrap=none
 
 # -----------------------------------------------------------------------------
-# Always regenerate changelog before creating the source distribution
+# GitHub shows .github/README.md in preference to README.org, so keep a
+# Markdown copy for it.
 # -----------------------------------------------------------------------------
-sdist: changelog
+readme:
+	@echo "→ Converting README.org → .github/README.md"
+	@mkdir -p .github
+	pandoc README.org -o .github/README.md -f org -t gfm --wrap=none
+
+# -----------------------------------------------------------------------------
+# Always regenerate changelog and README before creating the source distribution
+# -----------------------------------------------------------------------------
+sdist: changelog readme
 	@echo "→ Building source tarball for version $(VERSION)"
 	cabal clean
 	cabal sdist

@@ -1,8 +1,9 @@
+#+OPTIONS: tags:nil -:nil ^:{} H:4
 * swiss-army-knife :TOC_7_gh:
   - [[#created-by][Created By]]
   - [[#introduction][Introduction]]
   - [[#installation][Installation]]
-    - [[#statiic-builds-from-hackage][Statiic Builds from Hackage]]
+    - [[#static-builds-from-hackage][Static Builds from Hackage]]
   - [[#documentation][Documentation]]
     - [[#privileges-sudo][Privileges (sudo)]]
     - [[#sak---help][sak --help]]
@@ -43,19 +44,21 @@
    As I find out about them, I will fix them as quickly as I can.
 ** Installation
    + using cabal (recommended)
-     cabal update
-     cabal install swiss-army-knife
+     #+begin_src sh
+       cabal update
+       cabal install swiss-army-knife
+     #+end_src
    + On Arch from the AUR
      | using aura | aura -A swiss-army-knife |
      | using yay  | yay -S swiss-army-knife  |
      | using paru | paru -S swiss-army-knife |
-*** Statiic Builds from Hackage 
+*** Static Builds from Hackage 
     To build a statically-linked binary, install:
-    + `ghc-static` (Arch: `pacman -S ghc-static`)
-    + a static gmp (Arch: AUR `libgmp-static`)
-    + a static zlib — Arch's official package dropped `libz.a` as of 1.3.2;
+    + =ghc-static= (Arch: =pacman -S ghc-static=)
+    + a static gmp (Arch: AUR =libgmp-static=)
+    + a static zlib — Arch's official package dropped =libz.a= as of 1.3.2;
        build it yourself from https://zlib.net if needed.
-    Then: `cabal install swiss-army-knife -fstatic`
+    Then: =cabal install swiss-army-knife -fstatic=
 ** Documentation
    These are the current "knives". More to come; suggestions welcome.
 
@@ -123,11 +126,11 @@
     The running kernel comes from =uname -r=. Installed kernels are
     looked up with the distribution's package manager:
 
-    | Distribution family                                    | How                                                       |
-    |--------------------------------------------------------+-----------------------------------------------------------|
+    | Distribution family                                    | How                                           |
+    |--------------------------------------------------------+-----------------------------------------------|
     | Arch                                                   | =pacman -Q= for linux, linux-lts, linux-zen, linux-hardened |
-    | Debian, Ubuntu, Mint, Pop!_OS, Kali, elementary, Zorin | =dpkg-query= for =linux-image-*=                              |
-    | RHEL, CentOS, Fedora, Rocky, AlmaLinux, Oracle         | =rpm -qa kernel*= (headers, devel etc. excluded)            |
+    | Debian, Ubuntu, Mint, Pop!_OS, Kali, elementary, Zorin | =dpkg-query= for =linux-image-*=              |
+    | RHEL, CentOS, Fedora, Rocky, AlmaLinux, Oracle         | =rpm -qa kernel*= (headers, devel etc. excluded) |
 
     Arch is the most tested. If the packages can't be determined,
     =sak kernel= says so and still shows the running kernel.
@@ -241,13 +244,13 @@
     socket doesn't restart the service behind your back. Give exactly
     one flag:
 
-    | Flag             | Meaning                                               |
-    |------------------+-------------------------------------------------------|
-    | -a, --activate   | Start socket and service for this session.            |
-    | -A, --enable     | Start both, and enable the service at boot.           |
-    | -d, --deactivate | Stop both; the service still starts at the next boot. |
-    | -D, --disable    | Stop both, and disable the service at boot.           |
-    | -r, --reactivate | Restart both (e.g. after editing a =.network= file).    |
+    | Flag             | Meaning                                                  |
+    |------------------+----------------------------------------------------------|
+    | -a, --activate   | Start socket and service for this session.               |
+    | -A, --enable     | Start both, and enable the service at boot.              |
+    | -d, --deactivate | Stop both; the service still starts at the next boot.    |
+    | -D, --disable    | Stop both, and disable the service at boot.              |
+    | -r, --reactivate | Restart both (e.g. after editing a =.network= file).     |
 
 *** sak gitit
     Creates the remote repository for a local Git (or jj) repo, on
@@ -287,11 +290,10 @@
        sak gitit create TARGET REPONAME [-r | -n NAME]
      #+end_src
 
-     | Flag                   | Meaning                                                                        |
-     |------------------------+--------------------------------------------------------------------------------|
+     | Flag                   | Meaning                                                                       |
+     |------------------------+-------------------------------------------------------------------------------|
      | -r, --add-remote       | Also add the new repo as a remote of the current repo, named after the target. |
-     | -n, --remote-name NAME | Same, but use NAME as the remote name (e.g. =origin=). Implies =-r=.               |
-     |                        |                                                                                |
+     | -n, --remote-name NAME | Same, but use NAME as the remote name (e.g. =origin=). Implies =-r=.          |
 
      Without either flag, gitit only creates the repo and prints the
      =git remote add= command for you to run yourself.
@@ -339,12 +341,12 @@
      Bitbucket has no CLI login to borrow, so it is configured with
      environment variables:
 
-     | Variable            | Required | Meaning                                                   |
-     |---------------------+----------+-----------------------------------------------------------|
-     | =BITBUCKET_WORKSPACE= | yes      | Workspace slug, as in =bitbucket.org/WORKSPACE/...=         |
-     | =BITBUCKET_EMAIL=     | yes      | The email address you log in to Atlassian with.           |
+     | Variable              | Required | Meaning                                                  |
+     |-----------------------+----------+----------------------------------------------------------|
+     | =BITBUCKET_WORKSPACE= | yes      | Workspace slug, as in =bitbucket.org/WORKSPACE/...=      |
+     | =BITBUCKET_EMAIL=     | yes      | The email address you log in to Atlassian with.          |
      | =BITBUCKET_TOKEN=     | yes      | An Atlassian API token with Bitbucket scopes (see below). |
-     | =BITBUCKET_PROJECT=   | no       | Key of the project to create the repo in.                 |
+     | =BITBUCKET_PROJECT=   | no       | Key of the project to create the repo in.                |
 
      *The token.* Use an Atlassian *API token*, not a repository,
      project or workspace access token (those are tied to one
@@ -394,20 +396,20 @@
      (401) or permissions/scopes (403).
 
 ** Examples
-   | Command                                  | Description                                                                                                        |
-   |------------------------------------------+--------------------------------------------------------------------------------------------------------------------|
-   | sak extip                                | Will list your external IP and location information                                                                |
-   | sak wg -l                                | (If you are using wg_quick) will list all of your available WG vpns, as well as their active and enabled statuses. |
-   | sak wg -d                                | Will deactivate (but not disable) all WireGuard VPNs.                                                              |
-   | sak wg -D                                | Will disable all enabled WireGuard VPNs, and stop them.                                                            |
-   | sak sn -A                                | Will enable and start systemd-networkd.                                                                            |
-   | sak nm -D                                | Will disable and stop NetworkManager.                                                                              |
-   | sak extip -n                             | Will print just your external IPv4 address.                                                                        |
-   | sak kernel -j                            | Will print just the running kernel version.                                                                        |
-   | sak sleep -w 300                         | Will suspend the machine in 5 minutes.                                                                             |
-   | sak zfscheck                             | Will tell you whether archzfs supports the kernel in the repos, before you upgrade.                                |
-   | sak gitit create origin myrepo           | Will create a new remote repo named "myrepo" in the origin target.                                                 |
-   | sak gitit create github myrepo -r        | Will create "myrepo" on GitHub and add it as remote "github" of the current repo.                                  |
-   | sak gitit create gitlab myrepo -n origin | Will create "myrepo" on GitLab and add it as remote "origin" of the current repo.                                  |
-   |                                          |                                                                                                                    |
-   |------------------------------------------+--------------------------------------------------------------------------------------------------------------------|
+   | Command                        | Description                                                                                                        |
+   |--------------------------------+--------------------------------------------------------------------------------------------------------------------|
+   | sak extip                      | Will list your external IP and location information                                                                |
+   | sak wg -l                      | (If you are using wg_quick) will list all of your available WG vpns, as well as their active and enabled statuses. |
+   | sak wg -d                      | Will deactivate (but not disable) all WireGuard VPNs.                                                              |
+   | sak wg -D                      | Will disable all enabled WireGuard VPNs, and stop them.                                                            |
+   | sak sn -A                      | Will enable and start systemd-networkd.                                                                            |
+   | sak nm -D                      | Will disable and stop NetworkManager.                                                                              |
+   | sak extip -n                   | Will print just your external IPv4 address.                                                                        |
+   | sak kernel -j                  | Will print just the running kernel version.                                                                        |
+   | sak sleep -w 300               | Will suspend the machine in 5 minutes.                                                                             |
+   | sak zfscheck                   | Will tell you whether archzfs supports the kernel in the repos, before you upgrade.                                |
+   | sak gitit create origin myrepo | Will create a new remote repo named "myrepo" in the origin target.                                                 |
+   | sak gitit create github myrepo -r | Will create "myrepo" on GitHub and add it as remote "github" of the current repo.                          |
+   | sak gitit create gitlab myrepo -n origin | Will create "myrepo" on GitLab and add it as remote "origin" of the current repo.                   |
+   |                                |                                                                                                                    |
+   |--------------------------------+--------------------------------------------------------------------------------------------------------------------|

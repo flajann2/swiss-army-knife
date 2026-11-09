@@ -1,11 +1,13 @@
-# swiss-army-knife <span class="tag" data-tag-name="TOC_7_gh"><span class="smallcaps">TOC_7_gh</span></span>
+# swiss-army-knife
 
 - [Created By](#created-by)
 - [Introduction](#introduction)
 - [Installation](#installation)
-  - [Statiic Builds from Hackage](#statiic-builds-from-hackage)
+  - [Static Builds from Hackage](#static-builds-from-hackage)
 - [Documentation](#documentation)
-  - [sak –help](#sak---help)
+  - [Privileges (sudo)](#privileges-sudo)
+  - [sak --help](#sak---help)
+  - [sak version](#sak-version)
   - [sak extip](#sak-extip)
   - [sak kernel](#sak-kernel)
   - [sak sleep](#sak-sleep)
@@ -14,10 +16,13 @@
   - [sak nm](#sak-nm)
   - [sak sn](#sak-sn)
   - [sak gitit](#sak-gitit)
+    - [Managing targets](#managing-targets)
+    - [Creating a repo](#creating-a-repo)
     - [Local](#local)
-    - [Github](#github)
-    - [Gitlab](#gitlab)
+    - [GitHub](#github)
+    - [GitLab](#gitlab)
     - [Bitbucket](#bitbucket)
+    - [Errors](#errors)
 - [Examples](#examples)
 
 ## Created By
@@ -26,22 +31,20 @@ Fred Mitchell & Atomlogik
 
 ## Introduction
 
-Swiss-Army-Knife is a collection of useful tools that you can do
-quickly.
+Swiss-Army-Knife is a collection of useful tools that you can do quickly.
 
-This is now in Hackage and the AUR. So in theory, it can run "anywhere",
-though I have not had the time to test this, so I am open to comments
-and pull requests. In particular, it is gauranteed to run on Arch, and I
-do have some support for other distros, and that will grow. But I have
-not had the time to fully test other distros.
+This is now in Hackage and the AUR. So in theory, it can run "anywhere", though I have not had the time to test this, so I am open to comments and pull requests. In particular, it is gauranteed to run on Arch, and I do have some support for other distros, and that will grow. But I have not had the time to fully test other distros.
 
-So some knives will run "anywhere", but some that call out to the system
-for system-specific information may have issues. As I find out about
-them, I will fix them as quickly as I can.
+So some knives will run "anywhere", but some that call out to the system for system-specific information may have issues. As I find out about them, I will fix them as quickly as I can.
 
 ## Installation
 
-- using cabal (recommended) cabal update cabal install swiss-army-knife
+- using cabal (recommended)
+
+  ``` bash
+  cabal update
+  cabal install swiss-army-knife
+  ```
 
 - On Arch from the AUR
 
@@ -51,103 +54,304 @@ them, I will fix them as quickly as I can.
   | using yay  | yay -S swiss-army-knife  |
   | using paru | paru -S swiss-army-knife |
 
-### Statiic Builds from Hackage
+### Static Builds from Hackage
 
 To build a statically-linked binary, install:
 
-- \`ghc-static\` (Arch: \`pacman -S ghc-static\`)
-- a static gmp (Arch: AUR \`libgmp-static\`)
-- a static zlib — Arch's official package dropped \`libz.a\` as of
-  1.3.2; build it yourself from <https://zlib.net> if needed.
+- `ghc-static` (Arch: `pacman -S ghc-static`)
+- a static gmp (Arch: AUR `libgmp-static`)
+- a static zlib — Arch's official package dropped `libz.a` as of 1.3.2; build it yourself from <https://zlib.net> if needed.
 
-Then: \`cabal install swiss-army-knife -fstatic\`
+Then: `cabal install swiss-army-knife -fstatic`
 
 ## Documentation
 
-These are the current "knives" implemented. More to come. Open to
-suggestions.
+These are the current "knives". More to come; suggestions welcome.
 
-- Note that you no longer have to prepend "sudo" to do system-level
-  operations.
+Every knife is a sub-command of `sak`, and each has its own help:
 
-### sak –help
+```
+sak --help          # list all knives
+sak wg --help       # options for one knife
+```
 
-Will list all the current commands.
+### Privileges (sudo)
+
+You don't need to run `sak` itself with `sudo`. The knives that change system services (`wg`, `nm`, `sn`) call `sudo systemctl` themselves, so expect a password prompt unless your sudoers configuration allows `systemctl` without one. The other knives run as your normal user.
+
+### sak --help
+
+Lists all the knives with a one-line description of each. `-v` / `--verbose` is accepted as a global flag, but no knife uses it yet.
+
+### sak version
+
+Prints the installed version of Swiss Army Knife.
 
 ### sak extip
 
-Will tell you what your external IP is for your connection, either in
-IPv4 or IPv6 Useful if you use a VPN
+Shows the external (public) IP address of your connection, which is what the rest of the internet sees. Handy for confirming that a VPN is actually in use. By default it also shows the approximate location and time zone of that address.
+
+| Flag             | Meaning                                             |
+|------------------|-----------------------------------------------------|
+| -n, --nolocation | Show only the IP address, without location lookup.  |
+| -i, --ipv6       | Show your IPv6 address instead of the IPv4 address. |
+
+Example output:
+
+    203.0.113.42
+    Location: Frankfurt am Main, Germany (DE)
+    Timezone: Europe/Berlin
+
+The address comes from jsonip.com; the location from ip-api.com. `-i` only works if your connection has IPv6. The location lookup is done over plain HTTP and may reflect your IPv4 address even with `-i`; use `-n` if you'd rather not send that request.
 
 ### sak kernel
 
-Will tell you the version of the installed kernel as well as the running
-version. Support is in for Arch, Debian, and RedHat, but only Arch has
-been tested.
+Shows the kernel you are running and the kernel packages that are installed, so you can tell whether you need a reboot after an upgrade.
+
+| Flag | Meaning |
+|----|----|
+| -j, --justversion | Print only the running kernel version (useful in scripts). |
+
+Example output (Arch):
+
+    Running kernel:  6.17.7-arch1-1
+    Installed kernels:
+      linux 6.17.8.arch1-1
+      linux-lts 6.12.57-1
+
+The running kernel comes from `uname -r`. Installed kernels are looked up with the distribution's package manager:
+
+| Distribution family | How |
+|----|----|
+| Arch | `pacman -Q` for linux, linux-lts, linux-zen, linux-hardened |
+| Debian, Ubuntu, Mint, Pop!\_OS, Kali, elementary, Zorin | `dpkg-query` for `linux-image-*` |
+| RHEL, CentOS, Fedora, Rocky, AlmaLinux, Oracle | `rpm -qa kernel*` (headers, devel etc. excluded) |
+
+Arch is the most tested. If the packages can't be determined, `sak kernel` says so and still shows the running kernel.
 
 ### sak sleep
 
-Will put your system in standby mode.
+Suspends the machine (`systemctl suspend`).
+
+| Flag               | Meaning                                   |
+|--------------------|-------------------------------------------|
+| -w, --wait SECONDS | Wait this many seconds before suspending. |
+
+```
+sak sleep          # suspend now
+sak sleep -w 300   # suspend in 5 minutes
+```
+
+Suspend is requested with `-i`, so it goes ahead even if a program (a video player, a download) is holding a suspend inhibitor. The wait runs in the foreground; press Ctrl-C during it to cancel.
 
 ### sak zfscheck
 
-If you use the zfs from archzfs, sometimes it does not keep up with the
-latest kernel release. Check to see the latest kernel zfs supports
-before you do a system upgrade. Other distros will probably not have the
-zfs sync issues that Arch does.
+**Arch Linux with archzfs only.** ZFS on Arch is an out-of-tree module, and archzfs sometimes lags behind the newest kernel. If you upgrade the kernel before ZFS supports it, the ZFS module won't load and your pools won't import. `zfscheck` tells you, before you upgrade, whether the kernel currently in the repos is supported. That lets you stay on the regular `linux` kernel (held back when needed) instead of switching to `linux-lts`.
+
+| Flag       | Meaning                                                     |
+|------------|-------------------------------------------------------------|
+| -f, --full | Also show where the supported-kernel ceiling was read from. |
+
+It compares:
+
+- the `linux` version in the repos, the one installed, and the one running;
+- the OpenZFS version the repos would install (`zfs-dkms`, or `zfs-utils`), and the newest kernel that OpenZFS release supports (`Linux-Maximum` in its `META` file, read from `/usr/src/zfs-VERSION/META` if present, otherwise fetched from the OpenZFS release tag on GitHub with `curl`);
+- the exact kernel build that the prebuilt `zfs-linux` package targets, if that package is available.
+
+It then gives a verdict for both ways of installing ZFS:
+
+      DKMS route:     OK
+      Prebuilt route: NO
+
+    Upgrade possible: install linux, linux-headers and the ZFS packages in one transaction.
+
+- **DKMS route**: OK when the repo kernel's major.minor version is no newer than what the OpenZFS release supports.
+- **Prebuilt route**: OK only when `zfs-linux` was built for exactly the repo kernel.
+- If neither is OK it tells you not to upgrade the kernel yet. Add `linux` (and `linux-headers`) to `IgnorePkg` in `/etc/pacman.conf` to hold it back while upgrading everything else, and run `zfscheck` again later.
+
+The repo versions come from pacman's sync databases, so the result is only as fresh as your last database sync. `curl` must be installed for the GitHub fallback.
 
 ### sak wg
 
-If you use WireGuard for your VPN, manage it from here. List your
-installed WireGuard options, and swap among them. you can start, stop,
-and list your WireGuard VPNs.
+Manages WireGuard VPNs set up for `wg-quick`: each `/etc/wireguard/NAME.conf` is a VPN called `NAME`, run by the systemd unit `wg-quick@NAME`.
 
-Now supports enabling and disabling of the underlying daemon.
+| Flag | Meaning |
+|----|----|
+| -l, --list | List each VPN with whether it is active and whether it is enabled. |
+| -a, --activate VPN | Start VPN for this session only. |
+| -A, --enable VPN | Start VPN and enable it, so it also starts at boot. |
+| -d, --deactivate | Stop every active VPN. They stay enabled for the next boot. |
+| -D, --disable | Disable every enabled VPN, and stop them. |
+| -r, --reactivate | Restart every active VPN (e.g. after editing a config). |
+
+`-l` can be combined with any one other flag; the rest are mutually exclusive. The list is printed before the action runs, so it shows the state beforehand.
+
+```
+sak wg -l               # what's there and what's running
+sak wg -d; sak wg -a de-berlin   # switch VPNs (one action per call)
+```
+
+`sak` needs to be able to read the `/etc/wireguard` directory to find the VPN names.
 
 ### sak nm
 
-Manage NetworkManager Now supports enabling and disabling of the
-underlying daemon.
+Controls NetworkManager (`NetworkManager.service`). Give exactly one flag:
+
+| Flag             | Meaning                                    |
+|------------------|--------------------------------------------|
+| -a, --activate   | Start it for this session.                 |
+| -A, --enable     | Start it and enable it at boot.            |
+| -d, --deactivate | Stop it; it still starts at the next boot. |
+| -D, --disable    | Stop it and disable it at boot.            |
+| -r, --reactivate | Restart it.                                |
+
+Together with `sak sn` this makes switching between NetworkManager and systemd-networkd a two-command job, e.g. `sak nm -D; sak sn -A`. Don't leave both enabled: they will fight over the interfaces.
 
 ### sak sn
 
-Manage systemd-networkd Now supports enabling and disabling of the
-underlying daemon.
+Controls systemd-networkd. It acts on both `systemd-networkd.socket` and `systemd-networkd.service`, so the socket doesn't restart the service behind your back. Give exactly one flag:
+
+| Flag             | Meaning                                               |
+|------------------|-------------------------------------------------------|
+| -a, --activate   | Start socket and service for this session.            |
+| -A, --enable     | Start both, and enable the service at boot.           |
+| -d, --deactivate | Stop both; the service still starts at the next boot. |
+| -D, --disable    | Stop both, and disable the service at boot.           |
+| -r, --reactivate | Restart both (e.g. after editing a `.network` file).  |
 
 ### sak gitit
 
-Creates a remote Git repositority for your current local one.
-Configuration is via a yaml file. Primarily for "remote" repos hosted on
-your local machine.
+Creates the remote repository for a local Git (or jj) repo, on your own filesystem or on GitHub, GitLab or Bitbucket, and can add it as a remote of the local repo in the same step.
 
-1.  Local
+Destinations are called *targets*. Each target has a name, a kind (`local`, `github`, `gitlab` or `bitbucket`) and a location. They are stored in `~/.config/swiss-army-knife/config.yaml` under the `gitit` key, and managed with the sub-commands below rather than by editing the file.
 
-    This is for your filesystem-hosted repo, which you may have backed
-    by a cloud filesysten, such as pCloud.
+#### Managing targets
 
-2.  Github
+| Command | Description |
+|----|----|
+| sak gitit list | List the configured targets and their kinds. |
+| sak gitit add KIND NAME LOCATION | Add a target (KIND: local, github, gitlab or bitbucket). |
+| sak gitit delete NAME | Remove a target. |
+| sak gitit default NAME | Record a target as the default (not yet used by `create`). |
 
-    You must have gh installed and configured with your ssh credentials.
+LOCATION is a directory for `local` targets, and the forge's SSH prefix for the others.
 
-3.  Gitlab
+For example:
 
-    You must have glab installed and configured with your ssh
-    credentials.
+```
+sak gitit add local     origin    ~/pCloud/repo
+sak gitit add github    github    git@github.com:flajann2
+sak gitit add gitlab    gitlab    git@gitlab.com:eltoro-maestro
+sak gitit add bitbucket bitbucket git@bitbucket.org:eltoro-maestro
+```
 
-4.  Bitbucket
+For the forges the LOCATION is informational: the account a repo is created in comes from the credentials described below.
 
-    Bitbucket support will be added at a later date. If you would like
-    to see this, contact us.
+#### Creating a repo
+
+```
+sak gitit create TARGET REPONAME [-r | -n NAME]
+```
+
+| Flag | Meaning |
+|----|----|
+| -r, --add-remote | Also add the new repo as a remote of the current repo, named after the target. |
+| -n, --remote-name NAME | Same, but use NAME as the remote name (e.g. `origin`). Implies `-r`. |
+
+Without either flag, gitit only creates the repo and prints the `git remote add` command for you to run yourself.
+
+With `-r` or `-n`, run gitit from inside the local repo. Before anything is created, gitit checks that
+
+- the current directory is inside a git or jj repo, and
+- the local repo does not already have a remote with that name,
+
+so a typo never leaves an orphaned repo on the forge. In a jj repo (including a colocated one) the remote is added with `jj git remote add`, otherwise with `git remote add`. If adding the remote fails after the repo was created, gitit prints the exact command to add it by hand.
+
+Repos are currently created as public on all forges.
+
+#### Local
+
+Creates a bare repo at `LOCATION/REPONAME.git`, for example on a cloud-backed filesystem such as pCloud. The path is made absolute, so it works as a remote URL from any directory. Fails if that path already exists.
+
+#### GitHub
+
+Needs a GitHub token, taken from the first of:
+
+1.  the `GITHUB_TOKEN` environment variable, or
+2.  the GitHub CLI's login (`gh auth token`), after `gh auth login`.
+
+A classic token needs the `repo` scope (`public_repo` is enough for public repos); a fine-grained token needs *Administration: write*. The repo is created under the account the token belongs to.
+
+#### GitLab
+
+Needs a GitLab token, taken from the first of:
+
+1.  the `GITLAB_TOKEN` environment variable, or
+2.  glab's saved login (`glab config get token`), after `glab auth login`. If glab keeps the token in the system keyring, gitit cannot read it from there; use `GITLAB_TOKEN`.
+
+The token is a personal access token with the `api` scope, created under *Edit profile → Access tokens* (<https://gitlab.com/-/user_settings/personal_access_tokens>). For a self-hosted GitLab, set `GITLAB_HOST` (the same variable glab uses); the default is `gitlab.com`. The project is created in your user namespace.
+
+#### Bitbucket
+
+Bitbucket has no CLI login to borrow, so it is configured with environment variables:
+
+| Variable | Required | Meaning |
+|----|----|----|
+| `BITBUCKET_WORKSPACE` | yes | Workspace slug, as in `bitbucket.org/WORKSPACE/...` |
+| `BITBUCKET_EMAIL` | yes | The email address you log in to Atlassian with. |
+| `BITBUCKET_TOKEN` | yes | An Atlassian API token with Bitbucket scopes (see below). |
+| `BITBUCKET_PROJECT` | no | Key of the project to create the repo in. |
+
+**The token.** Use an Atlassian **API token**, not a repository, project or workspace access token (those are tied to one resource and cannot create new repos). Create it at <https://id.atlassian.com/manage-profile/security/api-tokens>:
+
+1.  Choose **Create API token with scopes** (the plain *Create API token* button makes a token Bitbucket rejects with "API Token provided has no Bitbucket scopes").
+2.  Pick **Bitbucket** as the app.
+3.  Grant `read:repository:bitbucket`, `write:repository:bitbucket` and `admin:repository:bitbucket`. Nothing else is needed; avoid the `delete:` scopes.
+4.  Copy the token; it is shown only once.
+
+**The project.** Every Bitbucket repo belongs to a project. Without `BITBUCKET_PROJECT`, Bitbucket uses the workspace's default project, and if you can't create repos there it answers "You can't create repositories under this project". Set it to the key of a project you administer (shown under the workspace's *Projects* page).
+
+In fish:
+
+```
+set -Ux BITBUCKET_WORKSPACE eltoro-maestro
+set -Ux BITBUCKET_EMAIL     you@example.com
+set -Ux BITBUCKET_PROJECT   KEY
+read -s -x -U BITBUCKET_TOKEN    # paste the token; it is not echoed
+```
+
+To check the credentials without gitit (expect `200`; `401` means the email/token pair is wrong):
+
+```
+curl -s -o /dev/null -w '%{http_code}\n' -u "$BITBUCKET_EMAIL:$BITBUCKET_TOKEN" \
+     "https://api.bitbucket.org/2.0/repositories/$BITBUCKET_WORKSPACE?pagelen=1"
+```
+
+Bitbucket repo slugs are lowercase, so `MyRepo` becomes `myrepo`.
+
+#### Errors
+
+API failures are reported as one line with the HTTP status and the forge's own message, for example:
+
+    gitit: Bitbucket API error (HTTP 400): project: You can't create repositories under this project.
+
+When the forge sends no message (Bitbucket answers a bad token with an empty 401), gitit says whether the problem is authentication (401) or permissions/scopes (403).
 
 ## Examples
 
 | Command | Description |
 |----|----|
 | sak extip | Will list your external IP and location information |
-| sak wg -l | (If you are using wg<sub>quick</sub>) will list all of your available WG vpns, as well as their active and enabled statuses. |
+| sak wg -l | (If you are using wg_quick) will list all of your available WG vpns, as well as their active and enabled statuses. |
 | sak wg -d | Will deactivate (but not disable) all WireGuard VPNs. |
-| sak wg -D | Will disable (but not deactivate) all WireGuard VPNs. |
+| sak wg -D | Will disable all enabled WireGuard VPNs, and stop them. |
 | sak sn -A | Will enable and start systemd-networkd. |
 | sak nm -D | Will disable and stop NetworkManager. |
+| sak extip -n | Will print just your external IPv4 address. |
+| sak kernel -j | Will print just the running kernel version. |
+| sak sleep -w 300 | Will suspend the machine in 5 minutes. |
+| sak zfscheck | Will tell you whether archzfs supports the kernel in the repos, before you upgrade. |
 | sak gitit create origin myrepo | Will create a new remote repo named "myrepo" in the origin target. |
+| sak gitit create github myrepo -r | Will create "myrepo" on GitHub and add it as remote "github" of the current repo. |
+| sak gitit create gitlab myrepo -n origin | Will create "myrepo" on GitLab and add it as remote "origin" of the current repo. |
 |  |  |
